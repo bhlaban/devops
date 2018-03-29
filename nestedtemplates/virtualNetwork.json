@@ -40,8 +40,8 @@
     }
   },
   "variables": {
-    "publicIpName": "publicIp",
-    "lbFrontEndName": "LoadBalancerFrontEnd",
+    "publicIpName": "devops-public-ip",
+    "lbFrontEndName": "devops-load-balancer-frontend",
     "publicIpID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIpName'))]",
     "loadBalancerID": "[resourceId('Microsoft.Network/loadBalancers',parameters('loadBalancerName'))]",
     "frontEndIPConfigID": "[concat(variables('loadBalancerID'),'/frontendIPConfigurations/', variables('lbFrontEndName'))]",

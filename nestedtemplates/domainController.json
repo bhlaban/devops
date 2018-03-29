@@ -83,7 +83,7 @@
     }
   },
   "variables": {
-    "networkInterfaceName": "[concat(parameters('vmName'), 'nic')]",
+    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
     "loadBalancerID": "[resourceId('Microsoft.Network/loadBalancers',parameters('existingLoadBalancerName'))]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
   },
@@ -146,7 +146,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "tfsStandardDcManagedOSDisk",
+            "name": "[concat(parameters('vmName'),'-disk-os')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
