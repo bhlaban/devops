@@ -1,13 +1,16 @@
-# TFS - 3 VM domain deployment
+# TFS Deployment with separate VM's for Domain Controller, SQL Server, and TFS
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Ftfs-dual-server%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/> 
 </a>
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Ftfs-dual-server%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/AzureGov.png"/>
+</a>
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/> 
 </a>
 
-This template creates a TFS deployment with three VMs. One VM serves as a domain controller for the other two. One of the domain-joined VMs will run SQL Server Standard edition. The second will run TFS, configured to use SQL on the first. All three will support RDP through NAT rules on a load balancer. This template is meant to be used to evaluate TFS in Azure, not as a production deployment.
+This template creates a TFS deployment with three VMs. One VM serves as a domain controller for the other two. One of the domain-joined VMs will run SQL Server Standard edition. The second will run TFS, configured to use SQL on the first. All three will support RDP through NAT rules on a load balancer.
 
 ## After Deployment
 
