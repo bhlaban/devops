@@ -8,6 +8,9 @@
     "adminPassword": {
       "value": "GEN-PASSWORD"
     },
+    "sshPublicKey": {
+      "value": "GEN-UNIQUE"
+    },
     "domainName": {
       "value": "contoso.local"
     }

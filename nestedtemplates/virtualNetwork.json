@@ -151,6 +151,17 @@
               "backendPort": 3389,
               "protocol": "Tcp"
             }
+          },
+          {
+            "name": "jama-ssh",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "frontendPort": 5003,
+              "backendPort": 22,
+              "protocol": "Tcp"
+            }
           }
         ]
       }

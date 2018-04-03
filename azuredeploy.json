@@ -14,6 +14,12 @@
         "description": "The password for the Administrator account"
       }
     },
+    "sshPublicKey": {
+      "type": "string",
+      "metadata": {
+        "description": "The public key for SSH access to the VM"
+      }
+    },
     "domainName": {
       "type": "string",
       "metadata": {
@@ -52,11 +58,13 @@
     "dcVmName": "dc01",
     "sqlVmName": "sql01",
     "tfsVmName": "tfs01",
+    "jamaVmName": "jama01",
     "nestedTemplates": {
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/domainController.json', parameters('_artifactsLocationSasToken')))]",
       "sqlServerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
-      "tfsServerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/tfs.json', parameters('_artifactsLocationSasToken')))]"
+      "tfsServerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/tfs.json', parameters('_artifactsLocationSasToken')))]",
+      "jamaServerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jama.json', parameters('_artifactsLocationSasToken')))]"
     }
   },
   "resources": [
@@ -268,6 +276,63 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('subnetName')]"
+          },
+          "existingAvailabilitySetName": {
+            "value": "[variables('availabilitySetName')]"
+          },
+          "existingLoadBalancerName": {
+            "value": "[variables('loadBalancerName')]"
+          },
+          "existingLoadBalancerBackendName": {
+            "value": "[variables('loadBalancerBackendName')]"
+          },
+          "existingSqlInstance": {
+            "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "JamaServer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-08-01",
+      "comments": "This creates the Jama VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SQLServer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').jamaServerTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('jamaVmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "sshPublicKey": {
+            "value": "[parameters('sshPublicKey')]"
           },
           "domainName": {
             "value": "[parameters('domainName')]"
