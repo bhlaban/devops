@@ -107,6 +107,9 @@
               "loadBalancerInboundNatRules": [
                 {
                   "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/jama-ssh')]"
+                },
+                {
+                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/jama-admin')]"
                 }
               ],
               "subnet": {
@@ -118,7 +121,6 @@
       }
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/ba2e280f-ab00-4ffb-9ad5-1b682d3933c2/resourceGroups/jama-rg/providers/Microsoft.Compute/virtualMachines/jama'.",
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
@@ -135,7 +137,7 @@
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",
-          "adminUsername": "sysadmin",
+          "adminUsername": "[parameters('adminUsername')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": true,
             "ssh": {
