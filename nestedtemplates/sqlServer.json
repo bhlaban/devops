@@ -155,6 +155,30 @@
       }
     },
     {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'), '/SqlIaasExtension')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+      ],
+      "properties": {
+        "type": "SqlIaaSAgent",
+        "publisher": "Microsoft.SqlServer.Management",
+        "typeHandlerVersion": "1.2",
+        "autoUpgradeMinorVersion": "true",
+        "settings": {
+          "AutoTelemetrySettings": {
+            "Region": "[resourceGroup().location]"
+          }
+        },
+        "protectedSettings": {
+          "SQLAuthUpdateUserName": "[parameters('adminUsername')]",
+          "SQLAuthUpdatePassword": "[parameters('adminPassword')]"
+        }
+      }
+    },
+    {
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/JoinDomain')]",
