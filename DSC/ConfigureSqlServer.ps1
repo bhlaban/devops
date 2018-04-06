@@ -13,6 +13,7 @@ configuration ConfigureSqlServer
     ) 
     
     Import-DscResource -ModuleName xSqlServer, xNetworking
+
     [System.Management.Automation.PSCredential] $DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
     $ComputerName = Get-Content env:computername

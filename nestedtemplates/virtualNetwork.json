@@ -26,36 +26,6 @@
         "description": "The name of subnet to create for web tier"
       }
     },
-    "webLoadBalancerName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the load balancer to create for web tier"
-      }
-    },
-    "webLoadBalancerBackendName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of load balancer backend to create for web tier"
-      }
-    },
-    "jamaAdminInboundNatRuleName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer NAT rule for Jama admin"
-      }
-    },
-    "jamaHttpsInboundNatRuleName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer NAT rule for Jama https"
-      }
-    },
-    "tfsHttpsInboundNatRuleName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer NAT rule for TFS https"
-      }
-    },
     "dataSubnetName": {
       "type": "string",
       "metadata": {
@@ -70,47 +40,12 @@
     }
   },
   "variables": {
-    "managementIpName": "management-ip",
-    "jamaIpName": "jama-ip",
-    "tfsIpName": "tfs-ip",
-    "jamaFrontEndName": "jama-frontend",
-    "tfsFrontEndName": "tfs-frontend",
     "managementNetworkSecurityGroupName": "[concat(parameters('managementSubnetName'), '-nsg')]",
     "directoryNetworkSecurityGroupName": "[concat(parameters('directorySubnetName'), '-nsg')]",
     "webNetworkSecurityGroupName": "[concat(parameters('webSubnetName'), '-nsg')]",
-    "webLoadBalancerID": "[resourceId('Microsoft.Network/loadBalancers',parameters('webLoadBalancerName'))]",
-    "jamaLoadBalancerFrontEndID": "[concat(variables('webLoadBalancerID'),'/frontendIPConfigurations/', variables('jamaFrontEndName'))]",
-    "tfsLoadBalancerFrontEndID": "[concat(variables('webLoadBalancerID'),'/frontendIPConfigurations/', variables('tfsFrontEndName'))]",
     "dataNetworkSecurityGroupName": "[concat(parameters('dataSubnetName'), '-nsg')]"
   },
   "resources": [
-    {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('managementIpName')]",
-      "apiVersion": "2017-09-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publicIPAllocationMethod": "Static"
-      }
-    },
-    {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('jamaIpName')]",
-      "apiVersion": "2017-09-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publicIPAllocationMethod": "Static"
-      }
-    },
-    {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('tfsIpName')]",
-      "apiVersion": "2017-09-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publicIPAllocationMethod": "Static"
-      }
-    },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('managementNetworkSecurityGroupName')]",
@@ -641,76 +576,6 @@
         "dhcpOptions": {
           "dnsServers": "[parameters('dnsServers')]"
         }
-      }
-    },
-    {
-      "type": "Microsoft.Network/loadBalancers",
-      "name": "[parameters('webLoadBalancerName')]",
-      "apiVersion": "2017-09-01",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('jamaIpName'))]",
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('tfsIpName'))]"
-      ],
-      "properties": {
-        "frontendIPConfigurations": [
-          {
-            "name": "[variables('jamaFrontEndName')]",
-            "properties": {
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('jamaIpName'))]"
-              }
-            }
-          },
-          {
-            "name": "[variables('tfsFrontEndName')]",
-            "properties": {
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('tfsIpName'))]"
-              }
-            }
-          }
-        ],
-        "backendAddressPools": [
-          {
-            "name": "[parameters('webLoadBalancerBackendName')]"
-          }
-        ],
-        "inboundNatRules": [
-          {
-            "name": "[parameters('jamaAdminInboundNatRuleName')]",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('jamaLoadBalancerFrontEndID')]"
-              },
-              "frontendPort": 8800,
-              "backendPort": 8800,
-              "protocol": "Tcp"
-            }
-          },
-          {
-            "name": "[parameters('jamaHttpsInboundNatRuleName')]",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('jamaLoadBalancerFrontEndID')]"
-              },
-              "frontendPort": 443,
-              "backendPort": 443,
-              "protocol": "Tcp"
-            }
-          },
-          {
-            "name": "[parameters('tfsHttpsInboundNatRuleName')]",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('tfsLoadBalancerFrontEndID')]"
-              },
-              "frontendPort": 443,
-              "backendPort": 443,
-              "protocol": "Tcp"
-            }
-          }
-        ]
       }
     }
   ]

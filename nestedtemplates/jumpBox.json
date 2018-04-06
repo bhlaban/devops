@@ -33,12 +33,6 @@
         "description": "The FQDN of the Active Directory Domain to be created"
       }
     },
-    "ipAddress": {
-      "type": "string",
-      "metadata": {
-        "description": "The internal IP address to give the VM"
-      }
-    },
     "existingVnetName": {
       "type": "string",
       "metadata": {
@@ -49,30 +43,6 @@
       "type": "string",
       "metadata": {
         "description": "The name of the subnet to connect to"
-      }
-    },
-    "existingLoadBalancerName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer"
-      }
-    },
-    "existingLoadBalancerBackendName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer backend"
-      }
-    },
-    "tfsHttpsInboundNatRuleName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer NAT rule for TFS https"
-      }
-    },
-    "existingSqlInstance": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the SQL Server to use for TFS"
       }
     },
     "_artifactsLocation": {
@@ -90,31 +60,32 @@
   },
   "variables": {
     "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
-    "loadBalancerID": "[resourceId('Microsoft.Network/loadBalancers', parameters('existingLoadBalancerName'))]"
+    "publicIpName": "[concat(parameters('vmName'), '-ip')]"
   },
   "resources": [
     {
+      "name": "[variables('publicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2017-09-01",
-      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
       "name": "[variables('networkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "ipConfigurations": [
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[parameters('ipAddress')]",
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[concat(variables('loadBalancerID'), '/backendAddressPools/', parameters('existingLoadBalancerBackendName'))]"
-                }
-              ],
-              "loadBalancerInboundNatRules": [
-                {
-                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/', parameters('tfsHttpsInboundNatRuleName'))]"
-                }
-              ],
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpName'))]"
+              },
               "subnet": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
               }
@@ -124,9 +95,9 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
-      "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
@@ -142,9 +113,9 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2016-Datacenter",
+            "publisher": "MicrosoftWindowsDesktop",
+            "offer": "Windows-10",
+            "sku": "RS3-Pro",
             "version": "latest"
           },
           "osDisk": {
@@ -163,9 +134,9 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/JoinDomain')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
@@ -184,32 +155,6 @@
         },
         "protectedSettings": {
           "Password": "[parameters('adminPassword')]"
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-03-30",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/ConfigureTfs')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'JoinDomain')]"
-      ],
-      "tags": {
-        "displayName": "Configure TFS"
-      },
-      "properties": {
-        "publisher": "Microsoft.Compute",
-        "type": "CustomScriptExtension",
-        "typeHandlerVersion": "1.8",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": [
-            "[concat(parameters('_artifactsLocation'), '/scripts/ConfigureTfsRemoteSql.ps1', parameters('_artifactsLocationSasToken'))]"
-          ]
-        },
-        "protectedSettings": {
-          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ConfigureTfsRemoteSql.ps1', ' ', parameters('ExistingSqlInstance'), ' ', concat(parameters('domainName'), '\\', parameters('adminUsername')), ' ', parameters('adminPassword'))]"
         }
       }
     }

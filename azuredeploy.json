@@ -67,12 +67,15 @@
     "sqlIpAddress": "10.0.3.10",
     "dcVmName": "dc01",
     "dcIpAddress": "10.0.1.10",
+    "jumpBoxVmName": "jama01",
     "nestedTemplates": {
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
+      "webLoadBalancerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/webLoadBalancer.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/domainController.json', parameters('_artifactsLocationSasToken')))]",
-      "sqlServerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
-      "tfsServerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/tfs.json', parameters('_artifactsLocationSasToken')))]",
-      "jamaServerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jama.json', parameters('_artifactsLocationSasToken')))]"
+      "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
+      "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
+      "jamaTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jama.json', parameters('_artifactsLocationSasToken')))]",
+      "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/tfs.json', parameters('_artifactsLocationSasToken')))]"
     }
   },
   "resources": [
@@ -80,7 +83,7 @@
       "name": "Network",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-08-01",
-      "comments": "This creates the public IP address, virtual network and load balancer",
+      "comments": "This creates the virtual network and subnets",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -100,6 +103,27 @@
           "webSubnetName": {
             "value": "[variables('webSubnetName')]"
           },
+          "dataSubnetName": {
+            "value": "[variables('dataSubnetName')]"
+          },
+          "dnsServers": {
+            "value": []
+          }
+        }
+      }
+    },
+    {
+      "name": "WebLoadBalancer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-08-01",
+      "comments": "This creates the load balancer and public IP's for the web tier",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').webLoadBalancerTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
           "webLoadBalancerName": {
             "value": "[variables('webLoadBalancerName')]"
           },
@@ -114,12 +138,6 @@
           },
           "tfsHttpsInboundNatRuleName": {
             "value": "[variables('tfsHttpsInboundNatRuleName')]"
-          },
-          "dataSubnetName": {
-            "value": "[variables('dataSubnetName')]"
-          },
-          "dnsServers": {
-            "value": []
           }
         }
       }
@@ -199,21 +217,6 @@
           "webSubnetName": {
             "value": "[variables('webSubnetName')]"
           },
-          "webLoadBalancerName": {
-            "value": "[variables('webLoadBalancerName')]"
-          },
-          "webLoadBalancerBackendName": {
-            "value": "[variables('webLoadBalancerBackendName')]"
-          },
-          "jamaAdminInboundNatRuleName": {
-            "value": "[variables('jamaAdminInboundNatRuleName')]"
-          },
-          "jamaHttpsInboundNatRuleName": {
-            "value": "[variables('jamaHttpsInboundNatRuleName')]"
-          },
-          "tfsHttpsInboundNatRuleName": {
-            "value": "[variables('tfsHttpsInboundNatRuleName')]"
-          },
           "dataSubnetName": {
             "value": "[variables('dataSubnetName')]"
           },
@@ -221,6 +224,51 @@
             "value": [
               "[variables('dcIpAddress')]"
             ]
+          }
+        }
+      }
+    },
+    {
+      "name": "JumpBox",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-08-01",
+      "comments": "This creates the JumpBox VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/UpdateDNS"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').jumpBoxTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('jumpBoxVmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('managementSubnetName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
           }
         }
       }
@@ -236,7 +284,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').sqlServerTemplate]",
+          "uri": "[variables('nestedTemplates').sqlTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -284,7 +332,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').jamaServerTemplate]",
+          "uri": "[variables('nestedTemplates').jamaTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -347,7 +395,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').tfsServerTemplate]",
+          "uri": "[variables('nestedTemplates').tfsTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

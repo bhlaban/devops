@@ -69,9 +69,9 @@
   },
   "resources": [
     {
-      "apiVersion": "2017-09-01",
-      "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('networkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [],
       "properties": {
@@ -90,9 +90,9 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
-      "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
@@ -114,10 +114,19 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmName'),'-disk-os')]",
+            "name": "[concat(parameters('vmName'),'-os')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
+          },
+          "dataDisks": [
+            {
+              "name": "[concat(parameters('vmName'), '-data')]",
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "1024",
+              "lun": 0
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -129,9 +138,9 @@
       }
     },
     {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'), '/SqlIaasExtension')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
@@ -153,9 +162,9 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/JoinDomain')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
@@ -178,8 +187,8 @@
       }
     },
     {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/ConfigureSQL')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [

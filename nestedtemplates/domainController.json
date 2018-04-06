@@ -69,8 +69,8 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('networkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -89,8 +89,8 @@
       }
     },
     {
-      "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
@@ -113,16 +113,16 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmName'),'-disk-os')]",
+            "name": "[concat(parameters('vmName'),'-os')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
             {
-              "name": "[concat(parameters('vmName'), '-disk-data')]",
+              "name": "[concat(parameters('vmName'), '-data')]",
               "caching": "None",
               "createOption": "Empty",
-              "diskSizeGB": "128",
+              "diskSizeGB": "1024",
               "lun": 0
             }
           ]
@@ -137,8 +137,8 @@
       }
     },
     {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/CreateDC')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
