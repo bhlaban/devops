@@ -116,7 +116,15 @@
             "name": "[concat(parameters('vmName'),'-disk-os')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
+          },
+          "dataDisks": [
+            {
+              "name": "[concat(variables('vmName'), '-disk-data')]",
+              "caching": "None",
+              "createOption": "Empty",
+              "lun": 0
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [

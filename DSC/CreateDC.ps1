@@ -13,8 +13,11 @@ configuration CreateDC
     ) 
     
     Import-DscResource -ModuleName xActiveDirectory, xNetworking
+
     [System.Management.Automation.PSCredential] $DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
+
     $Interface = Get-NetAdapter | Where Name -Like "Ethernet*"|Select-Object -First 1
+
     $InterfaceAlias = $($Interface.Name)
 
     Node localhost
@@ -68,12 +71,33 @@ configuration CreateDC
             Name      = "RSAT-AD-AdminCenter"
             DependsOn = "[WindowsFeature]ADDSInstall"
         }
-         
+
+		File DatabasePath {
+            Ensure = "Present"
+            Type = 'Directory'
+            DestinationPath = 'E:\ntds'
+        }
+
+		File LogPath {
+            Ensure = "Present"
+            Type = 'Directory'
+            DestinationPath = 'E:\ntds\logs'
+        }
+
+		File SysvolPath {
+            Ensure = "Present"
+            Type = 'Directory'
+            DestinationPath = 'E:\sysvol'
+        }
+
         xADDomain FirstDS {
             DomainName                    = $DomainName
             DomainAdministratorCredential = $DomainCreds
             SafemodeAdministratorPassword = $DomainCreds
             DependsOn                     = @("[WindowsFeature]ADDSInstall")
+			DatabasePath                  = 'E:\ntds'
+			LogPath                       = 'E:\ntds\logs'
+			SysvolPath                    = 'E:\sysvol'
         } 
     }
 } 
