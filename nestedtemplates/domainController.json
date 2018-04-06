@@ -65,7 +65,7 @@
     }
   },
   "variables": {
-    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
+    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]"
   },
   "resources": [
     {
@@ -119,7 +119,7 @@
           },
           "dataDisks": [
             {
-              "name": "[concat(variables('vmName'), '-disk-data')]",
+              "name": "[concat(parameters('vmName'), '-disk-data')]",
               "caching": "None",
               "createOption": "Empty",
               "lun": 0
