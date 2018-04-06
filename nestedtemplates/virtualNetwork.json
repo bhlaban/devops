@@ -78,6 +78,9 @@
     "managementNetworkSecurityGroupName": "[concat(parameters('managementSubnetName'), '-nsg')]",
     "directoryNetworkSecurityGroupName": "[concat(parameters('directorySubnetName'), '-nsg')]",
     "webNetworkSecurityGroupName": "[concat(parameters('webSubnetName'), '-nsg')]",
+    "webLoadBalancerID": "[resourceId('Microsoft.Network/loadBalancers',parameters('webLoadBalancerName'))]",
+    "jamaLoadBalancerFrontEndID": "[concat(variables('webLoadBalancerID'),'/frontendIPConfigurations/', variables('jamaFrontEndName'))]",
+    "tfsLoadBalancerFrontEndID": "[concat(variables('webLoadBalancerID'),'/frontendIPConfigurations/', variables('tfsFrontEndName'))]",
     "dataNetworkSecurityGroupName": "[concat(parameters('dataSubnetName'), '-nsg')]"
   },
   "resources": [
@@ -655,7 +658,7 @@
             "name": "[variables('jamaFrontEndName')]",
             "properties": {
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('jamaIpName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('jamaIpName'))]"
               }
             }
           },
@@ -663,7 +666,7 @@
             "name": "[variables('tfsFrontEndName')]",
             "properties": {
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('tfsIpName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('tfsIpName'))]"
               }
             }
           }
@@ -678,7 +681,7 @@
             "name": "[parameters('jamaAdminInboundNatRuleName')]",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('jamaIpName'))]"
+                "id": "[variables('jamaLoadBalancerFrontEndID')]"
               },
               "frontendPort": 8800,
               "backendPort": 8800,
@@ -689,7 +692,7 @@
             "name": "[parameters('jamaHttpsInboundNatRuleName')]",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('jamaIpName'))]"
+                "id": "[variables('jamaLoadBalancerFrontEndID')]"
               },
               "frontendPort": 443,
               "backendPort": 443,
@@ -700,7 +703,7 @@
             "name": "[parameters('tfsHttpsInboundNatRuleName')]",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('tfsIpName'))]"
+                "id": "[variables('tfsLoadBalancerFrontEndID')]"
               },
               "frontendPort": 443,
               "backendPort": 443,
