@@ -33,6 +33,12 @@
         "description": "The FQDN of the Active Directory Domain to be created"
       }
     },
+    "ipAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address to give the VM"
+      }
+    },
     "existingVnetName": {
       "type": "string",
       "metadata": {
@@ -43,30 +49,6 @@
       "type": "string",
       "metadata": {
         "description": "The name of the subnet to connect to"
-      }
-    },
-    "existingAvailabilitySetName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the availability set"
-      }
-    },
-    "existingLoadBalancerName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer"
-      }
-    },
-    "existingLoadBalancerBackendName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer backend"
-      }
-    },
-    "ipAddress": {
-      "type": "string",
-      "metadata": {
-        "description": "The internal IP address to give the VM"
       }
     },
     "_artifactsLocation": {
@@ -84,14 +66,12 @@
   },
   "variables": {
     "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
-    "loadBalancerID": "[resourceId('Microsoft.Network/loadBalancers',parameters('existingLoadBalancerName'))]",
-    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
   },
   "resources": [
     {
-      "apiVersion": "2017-09-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('networkInterfaceName')]",
+      "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "ipConfigurations": [
@@ -100,18 +80,8 @@
             "properties": {
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[parameters('ipAddress')]",
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[concat(variables('loadBalancerID'), '/backendAddressPools/', parameters('existingLoadBalancerBackendName'))]"
-                }
-              ],
-              "loadBalancerInboundNatRules": [
-                {
-                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/dc-rdp')]"
-                }
-              ],
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
               }
             }
           }
@@ -119,9 +89,9 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
+      "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
@@ -129,9 +99,6 @@
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
-        },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('existingAvailabilitySetName'))]"
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",

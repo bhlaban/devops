@@ -33,6 +33,12 @@
         "description": "The FQDN of the Active Directory Domain to be created"
       }
     },
+    "ipAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address to give the VM"
+      }
+    },
     "existingVnetName": {
       "type": "string",
       "metadata": {
@@ -43,24 +49,6 @@
       "type": "string",
       "metadata": {
         "description": "The name of the subnet to connect to"
-      }
-    },
-    "existingAvailabilitySetName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the availability set"
-      }
-    },
-    "existingLoadBalancerName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer"
-      }
-    },
-    "existingLoadBalancerBackendName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer backend"
       }
     },
     "_artifactsLocation": {
@@ -77,9 +65,7 @@
     }
   },
   "variables": {
-    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
-    "loadBalancerID": "[resourceId('Microsoft.Network/loadBalancers',parameters('existingLoadBalancerName'))]",
-    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
+    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]"
   },
   "resources": [
     {
@@ -93,19 +79,10 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[concat(variables('loadBalancerID'), '/backendAddressPools/', parameters('existingLoadBalancerBackendName'))]"
-                }
-              ],
-              "loadBalancerInboundNatRules": [
-                {
-                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/sql-rdp')]"
-                }
-              ],
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('ipAddress')]",
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
               }
             }
           }
@@ -123,9 +100,6 @@
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
-        },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('existingAvailabilitySetName'))]"
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",

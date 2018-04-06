@@ -33,6 +33,12 @@
         "description": "The FQDN of the Active Directory Domain to be created"
       }
     },
+    "ipAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address to give the VM"
+      }
+    },
     "existingVnetName": {
       "type": "string",
       "metadata": {
@@ -45,12 +51,6 @@
         "description": "The name of the subnet to connect to"
       }
     },
-    "existingAvailabilitySetName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the availability set"
-      }
-    },
     "existingLoadBalancerName": {
       "type": "string",
       "metadata": {
@@ -61,6 +61,18 @@
       "type": "string",
       "metadata": {
         "description": "The name of the Load Balancer backend"
+      }
+    },
+    "jamaAdminInboundNatRuleName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Load Balancer NAT rule for Jama admin"
+      }
+    },
+    "jamaHttpsInboundNatRuleName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Load Balancer NAT rule for Jama https"
       }
     },
     "existingSqlInstance": {
@@ -98,7 +110,8 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('ipAddress')]",
               "loadBalancerBackendAddressPools": [
                 {
                   "id": "[concat(variables('loadBalancerID'), '/backendAddressPools/', parameters('existingLoadBalancerBackendName'))]"
@@ -106,10 +119,10 @@
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/jama-ssh')]"
+                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/', parameters('jamaAdminInboundNatRuleName'))]"
                 },
                 {
-                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/jama-admin')]"
+                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/', parameters('jamaHttpsInboundNatRuleName'))]"
                 }
               ],
               "subnet": {
@@ -131,9 +144,6 @@
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
-        },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('existingAvailabilitySetName'))]"
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",

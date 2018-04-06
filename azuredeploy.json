@@ -50,15 +50,23 @@
   },
   "variables": {
     "vnetName": "devops-vnet",
-    "loadBalancerName": "devops-load-balancer",
-    "subnetName": "subnet01",
-    "loadBalancerBackendName": "devops-load-balancer-backend",
-    "availabilitySetName": "devops-availility-set",
-    "dcIpAddress": "10.0.0.4",
-    "dcVmName": "dc01",
-    "sqlVmName": "sql01",
-    "tfsVmName": "tfs01",
+    "managementSubnetName": "management-subnet",
+    "directorySubnetName": "directory-subnet",
+    "webSubnetName": "web-subnet",
+    "webLoadBalancerName": "web-load-balancer",
+    "webLoadBalancerBackendName": "web-backend",
+    "dataSubnetName": "data-subnet",
     "jamaVmName": "jama01",
+    "jamaIpAddress": "10.0.1.10",
+    "jamaAdminInboundNatRuleName": "jama-admin",
+    "jamaHttpsInboundNatRuleName": "jama-https",
+    "tfsVmName": "tfs01",
+    "tfsIpAddress": "10.0.1.20",
+    "tfsHttpsInboundNatRuleName": "tfs-https",
+    "sqlVmName": "sql01",
+    "sqlIpAddress": "10.0.2.10",
+    "dcVmName": "dc01",
+    "dcIpAddress": "10.0.3.10",
     "nestedTemplates": {
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/domainController.json', parameters('_artifactsLocationSasToken')))]",
@@ -83,17 +91,32 @@
           "vnetName": {
             "value": "[variables('vnetName')]"
           },
-          "loadBalancerName": {
-            "value": "[variables('loadBalancerName')]"
+          "managementSubnetName": {
+            "value": "[variables('managementSubnetName')]"
           },
-          "subnetName": {
-            "value": "[variables('subnetName')]"
+          "directorySubnetName": {
+            "value": "[variables('directorySubnetName')]"
           },
-          "loadBalancerBackendName": {
-            "value": "[variables('loadBalancerBackendName')]"
+          "webSubnetName": {
+            "value": "[variables('webSubnetName')]"
           },
-          "availabilitySetName": {
-            "value": "[variables('availabilitySetName')]"
+          "webLoadBalancerName": {
+            "value": "[variables('webLoadBalancerName')]"
+          },
+          "webLoadBalancerBackendName": {
+            "value": "[variables('webLoadBalancerBackendName')]"
+          },
+          "jamaAdminInboundNatRuleName": {
+            "value": "[variables('jamaAdminInboundNatRuleName')]"
+          },
+          "jamaHttpsInboundNatRuleName": {
+            "value": "[variables('jamaHttpsInboundNatRuleName')]"
+          },
+          "tfsHttpsInboundNatRuleName": {
+            "value": "[variables('tfsHttpsInboundNatRuleName')]"
+          },
+          "dataSubnetName": {
+            "value": "[variables('dataSubnetName')]"
           },
           "dnsServers": {
             "value": []
@@ -131,23 +154,14 @@
           "domainName": {
             "value": "[parameters('domainName')]"
           },
+          "ipAddress": {
+            "value": "[variables('dcIpAddress')]"
+          },
           "existingVnetName": {
             "value": "[variables('vnetName')]"
           },
           "existingSubnetName": {
-            "value": "[variables('subnetName')]"
-          },
-          "existingAvailabilitySetName": {
-            "value": "[variables('availabilitySetName')]"
-          },
-          "existingLoadBalancerName": {
-            "value": "[variables('loadBalancerName')]"
-          },
-          "existingLoadBalancerBackendName": {
-            "value": "[variables('loadBalancerBackendName')]"
-          },
-          "ipAddress": {
-            "value": "[variables('dcIpAddress')]"
+            "value": "[variables('directorySubnetName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
@@ -176,17 +190,32 @@
           "vnetName": {
             "value": "[variables('vnetName')]"
           },
-          "loadBalancerName": {
-            "value": "[variables('loadBalancerName')]"
+          "managementSubnetName": {
+            "value": "[variables('managementSubnetName')]"
           },
-          "subnetName": {
-            "value": "[variables('subnetName')]"
+          "directorySubnetName": {
+            "value": "[variables('directorySubnetName')]"
           },
-          "loadBalancerBackendName": {
-            "value": "[variables('loadBalancerBackendName')]"
+          "webSubnetName": {
+            "value": "[variables('webSubnetName')]"
           },
-          "availabilitySetName": {
-            "value": "[variables('availabilitySetName')]"
+          "webLoadBalancerName": {
+            "value": "[variables('webLoadBalancerName')]"
+          },
+          "webLoadBalancerBackendName": {
+            "value": "[variables('webLoadBalancerBackendName')]"
+          },
+          "jamaAdminInboundNatRuleName": {
+            "value": "[variables('jamaAdminInboundNatRuleName')]"
+          },
+          "jamaHttpsInboundNatRuleName": {
+            "value": "[variables('jamaHttpsInboundNatRuleName')]"
+          },
+          "tfsHttpsInboundNatRuleName": {
+            "value": "[variables('tfsHttpsInboundNatRuleName')]"
+          },
+          "dataSubnetName": {
+            "value": "[variables('dataSubnetName')]"
           },
           "dnsServers": {
             "value": [
@@ -226,77 +255,14 @@
           "domainName": {
             "value": "[parameters('domainName')]"
           },
-          "existingVnetName": {
-            "value": "[variables('vnetName')]"
-          },
-          "existingSubnetName": {
-            "value": "[variables('subnetName')]"
-          },
-          "existingAvailabilitySetName": {
-            "value": "[variables('availabilitySetName')]"
-          },
-          "existingLoadBalancerName": {
-            "value": "[variables('loadBalancerName')]"
-          },
-          "existingLoadBalancerBackendName": {
-            "value": "[variables('loadBalancerBackendName')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "TfsServer",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-08-01",
-      "comments": "This creates the TFS VM",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/SQLServer"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('nestedTemplates').tfsServerTemplate]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "vmName": {
-            "value": "[variables('tfsVmName')]"
-          },
-          "vmSize": {
-            "value": "[parameters('vmSize')]"
-          },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "domainName": {
-            "value": "[parameters('domainName')]"
+          "ipAddress": {
+            "value": "[variables('sqlIpAddress')]"
           },
           "existingVnetName": {
             "value": "[variables('vnetName')]"
           },
           "existingSubnetName": {
-            "value": "[variables('subnetName')]"
-          },
-          "existingAvailabilitySetName": {
-            "value": "[variables('availabilitySetName')]"
-          },
-          "existingLoadBalancerName": {
-            "value": "[variables('loadBalancerName')]"
-          },
-          "existingLoadBalancerBackendName": {
-            "value": "[variables('loadBalancerBackendName')]"
-          },
-          "existingSqlInstance": {
-            "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"
+            "value": "[variables('dataSubnetName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
@@ -337,20 +303,86 @@
           "domainName": {
             "value": "[parameters('domainName')]"
           },
+          "ipAddress": {
+            "value": "[variables('sqlIpAddress')]"
+          },
           "existingVnetName": {
             "value": "[variables('vnetName')]"
           },
           "existingSubnetName": {
-            "value": "[variables('subnetName')]"
-          },
-          "existingAvailabilitySetName": {
-            "value": "[variables('availabilitySetName')]"
+            "value": "[variables('webSubnetName')]"
           },
           "existingLoadBalancerName": {
-            "value": "[variables('loadBalancerName')]"
+            "value": "[variables('webLoadBalancerName')]"
           },
           "existingLoadBalancerBackendName": {
-            "value": "[variables('loadBalancerBackendName')]"
+            "value": "[variables('webLoadBalancerBackendName')]"
+          },
+          "jamaAdminInboundNatRuleName": {
+            "value": "[variables('jamaAdminInboundNatRuleName')]"
+          },
+          "jamaHttpsInboundNatRuleName": {
+            "value": "[variables('jamaHttpsInboundNatRuleName')]"
+          },
+          "existingSqlInstance": {
+            "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TfsServer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-08-01",
+      "comments": "This creates the TFS VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SQLServer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').tfsServerTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('tfsVmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "ipAddress": {
+            "value": "[variables('tfsIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('webSubnetName')]"
+          },
+          "existingLoadBalancerName": {
+            "value": "[variables('webLoadBalancerName')]"
+          },
+          "existingLoadBalancerBackendName": {
+            "value": "[variables('webLoadBalancerBackendName')]"
+          },
+          "tfsHttpsInboundNatRuleName": {
+            "value": "[variables('tfsHttpsInboundNatRuleName')]"
           },
           "existingSqlInstance": {
             "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"
