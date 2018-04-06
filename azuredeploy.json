@@ -352,7 +352,7 @@
             "value": "[parameters('domainName')]"
           },
           "ipAddress": {
-            "value": "[variables('sqlIpAddress')]"
+            "value": "[variables('jamaIpAddress')]"
           },
           "existingVnetName": {
             "value": "[variables('vnetName')]"
