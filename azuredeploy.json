@@ -24,7 +24,8 @@
       "type": "string",
       "metadata": {
         "description": "The FQDN of the Active Directory Domain to be created"
-      }
+      },
+      "defaultValue": "seicdevops.com"
     },
     "vmSize": {
       "type": "string",
