@@ -57,8 +57,8 @@
             "name": "AllowRdpInbound",
             "properties": {
               "description": "Allow inbound RDP traffic from the Internet",
-              "protocol": "Tcp",
-              "sourcePortRange": "3389",
+              "protocol": "*",
+              "sourcePortRange": "*",
               "destinationPortRange": "3389",
               "sourceAddressPrefix": "Internet",
               "destinationAddressPrefix": "10.0.0.128/25",
@@ -91,8 +91,8 @@
             "name": "AllowHttpsInbound",
             "properties": {
               "description": "Allow inbound 443 traffic from the Internet",
-              "protocol": "Tcp",
-              "sourcePortRange": "443",
+              "protocol": "*",
+              "sourcePortRange": "*",
               "destinationPortRange": "443",
               "sourceAddressPrefix": "Internet",
               "destinationAddressPrefix": "10.0.2.0/24",
