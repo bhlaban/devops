@@ -89,6 +89,9 @@
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('networkInterfaceName')]",
       "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
+      ],
       "properties": {
         "ipConfigurations": [
           {
