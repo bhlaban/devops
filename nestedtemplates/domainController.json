@@ -113,13 +113,13 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmName'),'-os')]",
+            "name": "[concat(parameters('vmName'),'-disk-os')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
             {
-              "name": "[concat(parameters('vmName'), '-data')]",
+              "name": "[concat(parameters('vmName'), '-disk-data')]",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": "1024",

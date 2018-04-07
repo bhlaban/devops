@@ -132,7 +132,7 @@
           },
           "osDisk": {
             "osType": "Linux",
-            "name": "[concat(parameters('vmName'), '-os')]",
+            "name": "[concat(parameters('vmName'), '-disk-os')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
