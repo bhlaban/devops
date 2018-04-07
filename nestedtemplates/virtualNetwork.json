@@ -78,7 +78,8 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('directoryNetworkSecurityGroupName')]",
       "apiVersion": "2018-01-01",
-      "location": "[resourceGroup().location]"
+      "location": "[resourceGroup().location]",
+      "properties": {}
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
@@ -112,7 +113,8 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('dataNetworkSecurityGroupName')]",
       "apiVersion": "2018-01-01",
-      "location": "[resourceGroup().location]"
+      "location": "[resourceGroup().location]",
+      "properties": {}
     },
     {
       "type": "Microsoft.Network/virtualNetworks",

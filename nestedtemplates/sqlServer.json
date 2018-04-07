@@ -123,7 +123,7 @@
               "name": "[concat(parameters('vmName'), '-disk-data')]",
               "caching": "None",
               "createOption": "Empty",
-              "diskSizeGB": "1024",
+              "diskSizeGB": 1024,
               "lun": 0
             }
           ]
