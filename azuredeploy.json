@@ -55,7 +55,7 @@
     "directorySubnetName": "directory-subnet",
     "webSubnetName": "web-subnet",
     "dataSubnetName": "data-subnet",
-    "jumpBoxVmName": "jama01",
+    "jumpBoxVmName": "jumpbox01",
     "dcVmName": "dc01",
     "dcIpAddress": "10.0.1.10",
     "jamaVmName": "jama01",
