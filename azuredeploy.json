@@ -50,7 +50,7 @@
     "tfsIpAddress": "10.0.2.20",
     "sqlVmName": "sql01",
     "sqlIpAddress": "10.0.3.10",
-    "_artifactsLocation": "[deployment().templateLink.uri]",
+    "_artifactsLocation": "[deployment().properties.templateLink.uri]",
     "nestedTemplates": {
       "networkTemplate": "[uri(variables('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json'))]",
       "domainControllerTemplate": "[uri(variables('_artifactsLocation'), concat('nestedtemplates/domainController.json'))]",
