@@ -53,24 +53,18 @@
     "managementSubnetName": "management-subnet",
     "directorySubnetName": "directory-subnet",
     "webSubnetName": "web-subnet",
-    "webLoadBalancerName": "web-load-balancer",
-    "webLoadBalancerBackendName": "web-backend",
     "dataSubnetName": "data-subnet",
-    "jamaVmName": "jama01",
-    "jamaIpAddress": "10.0.2.10",
-    "jamaAdminInboundNatRuleName": "jama-admin",
-    "jamaHttpsInboundNatRuleName": "jama-https",
-    "tfsVmName": "tfs01",
-    "tfsIpAddress": "10.0.2.20",
-    "tfsHttpsInboundNatRuleName": "tfs-https",
-    "sqlVmName": "sql01",
-    "sqlIpAddress": "10.0.3.10",
+    "jumpBoxVmName": "jama01",
     "dcVmName": "dc01",
     "dcIpAddress": "10.0.1.10",
-    "jumpBoxVmName": "jama01",
+    "jamaVmName": "jama01",
+    "jamaIpAddress": "10.0.2.10",
+    "tfsVmName": "tfs01",
+    "tfsIpAddress": "10.0.2.20",
+    "sqlVmName": "sql01",
+    "sqlIpAddress": "10.0.3.10",
     "nestedTemplates": {
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
-      "webLoadBalancerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/webLoadBalancer.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/domainController.json', parameters('_artifactsLocationSasToken')))]",
       "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
       "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
@@ -108,36 +102,6 @@
           },
           "dnsServers": {
             "value": []
-          }
-        }
-      }
-    },
-    {
-      "name": "WebLoadBalancer",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-08-01",
-      "comments": "This creates the load balancer and public IP's for the web tier",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('nestedTemplates').webLoadBalancerTemplate]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "webLoadBalancerName": {
-            "value": "[variables('webLoadBalancerName')]"
-          },
-          "webLoadBalancerBackendName": {
-            "value": "[variables('webLoadBalancerBackendName')]"
-          },
-          "jamaAdminInboundNatRuleName": {
-            "value": "[variables('jamaAdminInboundNatRuleName')]"
-          },
-          "jamaHttpsInboundNatRuleName": {
-            "value": "[variables('jamaHttpsInboundNatRuleName')]"
-          },
-          "tfsHttpsInboundNatRuleName": {
-            "value": "[variables('tfsHttpsInboundNatRuleName')]"
           }
         }
       }
@@ -360,18 +324,6 @@
           "existingSubnetName": {
             "value": "[variables('webSubnetName')]"
           },
-          "existingLoadBalancerName": {
-            "value": "[variables('webLoadBalancerName')]"
-          },
-          "existingLoadBalancerBackendName": {
-            "value": "[variables('webLoadBalancerBackendName')]"
-          },
-          "jamaAdminInboundNatRuleName": {
-            "value": "[variables('jamaAdminInboundNatRuleName')]"
-          },
-          "jamaHttpsInboundNatRuleName": {
-            "value": "[variables('jamaHttpsInboundNatRuleName')]"
-          },
           "existingSqlInstance": {
             "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"
           },
@@ -422,15 +374,6 @@
           },
           "existingSubnetName": {
             "value": "[variables('webSubnetName')]"
-          },
-          "existingLoadBalancerName": {
-            "value": "[variables('webLoadBalancerName')]"
-          },
-          "existingLoadBalancerBackendName": {
-            "value": "[variables('webLoadBalancerBackendName')]"
-          },
-          "tfsHttpsInboundNatRuleName": {
-            "value": "[variables('tfsHttpsInboundNatRuleName')]"
           },
           "existingSqlInstance": {
             "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"

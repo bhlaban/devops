@@ -60,7 +60,7 @@
   },
   "variables": {
     "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
-    "publicIpName": "[concat(parameters('vmName'), '-ip')]"
+    "publicIpName": "[concat(variables('networkInterfaceName'), '-ip')]"
   },
   "resources": [
     {

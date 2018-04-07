@@ -51,24 +51,6 @@
         "description": "The name of the subnet to connect to"
       }
     },
-    "existingLoadBalancerName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer"
-      }
-    },
-    "existingLoadBalancerBackendName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer backend"
-      }
-    },
-    "tfsHttpsInboundNatRuleName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the Load Balancer NAT rule for TFS https"
-      }
-    },
     "existingSqlInstance": {
       "type": "string",
       "metadata": {
@@ -90,7 +72,7 @@
   },
   "variables": {
     "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
-    "loadBalancerID": "[resourceId('Microsoft.Network/loadBalancers', parameters('existingLoadBalancerName'))]"
+    "publicIpName": "[concat(variables('networkInterfaceName'), '-ip')]"
   },
   "resources": [
     {
@@ -105,16 +87,9 @@
             "properties": {
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[parameters('ipAddress')]",
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[concat(variables('loadBalancerID'), '/backendAddressPools/', parameters('existingLoadBalancerBackendName'))]"
-                }
-              ],
-              "loadBalancerInboundNatRules": [
-                {
-                  "id": "[concat(variables('loadBalancerID'),'/inboundNatRules/', parameters('tfsHttpsInboundNatRuleName'))]"
-                }
-              ],
+              "publicIpAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpName'))]"
+              },
               "subnet": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
               }
