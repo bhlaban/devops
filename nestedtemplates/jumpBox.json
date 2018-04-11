@@ -69,7 +69,11 @@
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "Static"
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "seic-jumpbox",
+          "fqdn": "seic-jumpbox.usgovvirginia.cloudapp.usgovcloudapi.net"
+        }
       }
     },
     {
@@ -158,6 +162,37 @@
         },
         "protectedSettings": {
           "Password": "[parameters('adminPassword')]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('vmName'),'/ConfigureJumpBox')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2017-03-30",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.19",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "ModulesUrl": "[concat(parameters('_artifactsLocation'), '/DSC/CreateDC.ps1.zip', parameters('_artifactsLocationSasToken'))]",
+          "ConfigurationFunction": "CreateDC.ps1\\CreateDC",
+          "Properties": {
+            "DomainName": "[parameters('domainName')]",
+            "AdminCreds": {
+              "UserName": "[parameters('adminUsername')]",
+              "Password": "PrivateSettingsRef:AdminPassword"
+            }
+          }
+        },
+        "protectedSettings": {
+          "Items": {
+            "AdminPassword": "[parameters('adminPassword')]"
+          }
         }
       }
     }

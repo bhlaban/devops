@@ -81,7 +81,11 @@
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "Static"
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "seic-jama",
+          "fqdn": "seic-jama.usgovvirginia.cloudapp.usgovcloudapi.net"
+        }
       }
     },
     {

@@ -137,7 +137,7 @@
       }
     },
     {
-      "name": "[concat(parameters('vmName'),'/CreateDC')]",
+      "name": "[concat(parameters('vmName'),'/ConfigureDC')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
@@ -150,8 +150,8 @@
         "typeHandlerVersion": "2.19",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "ModulesUrl": "[concat(parameters('_artifactsLocation'), '/DSC/CreateDC.ps1.zip', parameters('_artifactsLocationSasToken'))]",
-          "ConfigurationFunction": "CreateDC.ps1\\CreateDC",
+          "ModulesUrl": "[concat(parameters('_artifactsLocation'), '/DSC/ConfigureDC.ps1.zip', parameters('_artifactsLocationSasToken'))]",
+          "ConfigurationFunction": "ConfigureDC.ps1\\ConfigureDC",
           "Properties": {
             "DomainName": "[parameters('domainName')]",
             "AdminCreds": {

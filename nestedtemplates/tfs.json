@@ -81,7 +81,12 @@
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "Static"
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "seic-tfs",
+          "fqdn": "seic-tfs.usgovvirginia.cloudapp.usgovcloudapi.net"
+        }
+
       }
     },
     {
