@@ -1,4 +1,4 @@
-configuration CreateDC 
+configuration ConfigureDC 
 { 
     param 
     ( 
