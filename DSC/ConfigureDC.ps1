@@ -26,19 +26,19 @@ configuration ConfigureDC
             RebootNodeIfNeeded = $true
         }
 
-		xWaitforDisk Disk2
-		{
-			DiskId = 2
-			RetryIntervalSec = $RetryIntervalSec
-			RetryCount = $RetryCount
-		}
+        xWaitforDisk Disk2
+        {
+            DiskId = 2
+            RetryIntervalSec = $RetryIntervalSec
+            RetryCount = $RetryCount
+        }
     
-		xDisk DiskF
-		{
-			DiskId = 2
-			DriveLetter = 'F'
-			DependsOn = '[xWaitforDisk]Disk2'
-		}
+        xDisk DiskF
+        {
+            DiskId = 2
+            DriveLetter = 'F'
+            DependsOn = '[xWaitforDisk]Disk2'
+        }
 
         WindowsFeature DNS { 
             Ensure = "Present" 
@@ -86,20 +86,20 @@ configuration ConfigureDC
             DependsOn = "[WindowsFeature]ADDSInstall"
         }
     
-		xPendingReboot BeforeDC
-		{
-			Name = 'BeforeDC'
-			SkipCcmClientSDK = $true
-			DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF'
-		}
+        xPendingReboot BeforeDC
+        {
+            Name = 'BeforeDC'
+            SkipCcmClientSDK = $true
+            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF'
+        }
 
         xADDomain FirstDS {
             DomainName = $DomainName
             DomainAdministratorCredential = $DomainCreds
             SafemodeAdministratorPassword = $DomainCreds
-			DatabasePath = 'F:\NTDS'
-			LogPath = 'F:\NTDS'
-			SysvolPath = 'F:\SYSVOL'
+            DatabasePath = 'F:\NTDS'
+            LogPath = 'F:\NTDS'
+            SysvolPath = 'F:\SYSVOL'
             DependsOn = @("[WindowsFeature]ADDSInstall")
         } 
     }
