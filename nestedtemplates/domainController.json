@@ -51,6 +51,24 @@
         "description": "The name of the subnet to connect to"
       }
     },
+    "automationRegistrationUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The automation registration URL"
+      }
+    },
+    "automationRegistrationKey": {
+      "type": "string",
+      "metadata": {
+        "description": "The automation registration key"
+      }
+    },
+    "automationDscConfigName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the DSC configuration to apply using automation"
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -147,22 +165,30 @@
       "properties": {
         "publisher": "Microsoft.Powershell",
         "type": "DSC",
-        "typeHandlerVersion": "2.19",
+        "typeHandlerVersion": "2.75",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "ModulesUrl": "[concat(parameters('_artifactsLocation'), '/DSC/ConfigureDC.ps1.zip', parameters('_artifactsLocationSasToken'))]",
-          "ConfigurationFunction": "ConfigureDC.ps1\\ConfigureDC",
-          "Properties": {
-            "DomainName": "[parameters('domainName')]",
-            "AdminCreds": {
-              "UserName": "[parameters('adminUsername')]",
-              "Password": "PrivateSettingsRef:AdminPassword"
+          "configurationFunction": "",
+          "modulesUrl": "",
+          "configurationArguments": [
+            {
+              "Name": "RegistrationKey",
+              "Value": {
+                "UserName": "PLACEHOLDER_DONOTUSE",
+                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+              }
+            },
+            {
+              "RegistrationUrl": "[parameters('automationRegistrationUrl')]"
+            },
+            {
+              "NodeConfigurationName": "[parameters('automationDscConfigName')]"
             }
-          }
+          ]
         },
         "protectedSettings": {
           "Items": {
-            "AdminPassword": "[parameters('adminPassword')]"
+            "registrationKeyPrivate": "[parameters('automationRegistrationKey')]"
           }
         }
       }
