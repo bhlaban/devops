@@ -12,7 +12,7 @@ configuration ConfigureDC
         [Int]$RetryIntervalSec = 30
     ) 
     
-    Import-DscResource -ModuleName xActiveDirectory, xNetworking
+    Import-DscResource -ModuleName xActiveDirectory, xNetworking, xPendingReboot, xStorage
 
     [System.Management.Automation.PSCredential] $DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
@@ -26,78 +26,81 @@ configuration ConfigureDC
             RebootNodeIfNeeded = $true
         }
 
+		xWaitforDisk Disk2
+		{
+			DiskId = 2
+			RetryIntervalSec = $RetryIntervalSec
+			RetryCount = $RetryCount
+		}
+    
+		xDisk DiskF
+		{
+			DiskId = 2
+			DriveLetter = 'F'
+			DependsOn = '[xWaitforDisk]Disk2'
+		}
+
         WindowsFeature DNS { 
             Ensure = "Present" 
-            Name   = "DNS"
+            Name = "DNS"
         }
 
         Script EnableDNSDiags {
-            SetScript  = { 
+            SetScript = { 
                 Set-DnsServerDiagnostics -All $true
                 Write-Verbose -Verbose "Enabling DNS client diagnostics" 
             }
-            GetScript  = { @{} }
+            GetScript = { @{} }
             TestScript = { $false }
-            DependsOn  = "[WindowsFeature]DNS"
+            DependsOn = "[WindowsFeature]DNS"
         }
 
         WindowsFeature DnsTools {
-            Ensure    = "Present"
-            Name      = "RSAT-DNS-Server"
+            Ensure = "Present"
+            Name = "RSAT-DNS-Server"
             DependsOn = "[WindowsFeature]DNS"
         }
 
         xDnsServerAddress DnsServerAddress { 
-            Address        = '127.0.0.1' 
+            Address = '127.0.0.1' 
             InterfaceAlias = $InterfaceAlias
-            AddressFamily  = 'IPv4'
-            DependsOn      = "[WindowsFeature]DNS"
+            AddressFamily = 'IPv4'
+            DependsOn = "[WindowsFeature]DNS"
         }
 
         WindowsFeature ADDSInstall { 
-            Ensure    = "Present" 
-            Name      = "AD-Domain-Services"
+            Ensure = "Present" 
+            Name = "AD-Domain-Services"
             DependsOn = "[WindowsFeature]DNS" 
         } 
 
         WindowsFeature ADDSTools {
-            Ensure    = "Present"
-            Name      = "RSAT-ADDS-Tools"
+            Ensure = "Present"
+            Name = "RSAT-ADDS-Tools"
             DependsOn = "[WindowsFeature]ADDSInstall"
         }
 
         WindowsFeature ADAdminCenter {
-            Ensure    = "Present"
-            Name      = "RSAT-AD-AdminCenter"
+            Ensure = "Present"
+            Name = "RSAT-AD-AdminCenter"
             DependsOn = "[WindowsFeature]ADDSInstall"
         }
-
-		File DatabasePath {
-            Ensure = "Present"
-            Type = 'Directory'
-            DestinationPath = 'E:\ntds'
-        }
-
-		File LogPath {
-            Ensure = "Present"
-            Type = 'Directory'
-            DestinationPath = 'E:\ntds\logs'
-        }
-
-		File SysvolPath {
-            Ensure = "Present"
-            Type = 'Directory'
-            DestinationPath = 'E:\sysvol'
-        }
+    
+		xPendingReboot BeforeDC
+		{
+			Name = 'BeforeDC'
+			SkipCcmClientSDK = $true
+			DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF'
+		}
 
         xADDomain FirstDS {
-            DomainName                    = $DomainName
+            DomainName = $DomainName
             DomainAdministratorCredential = $DomainCreds
             SafemodeAdministratorPassword = $DomainCreds
-            DependsOn                     = @("[WindowsFeature]ADDSInstall")
-			DatabasePath                  = 'E:\ntds'
-			LogPath                       = 'E:\ntds\logs'
-			SysvolPath                    = 'E:\sysvol'
+			DatabasePath = 'F:\NTDS'
+			LogPath = 'F:\NTDS'
+			SysvolPath = 'F:\SYSVOL'
+            DependsOn = @("[WindowsFeature]ADDSInstall")
         } 
     }
 } 
