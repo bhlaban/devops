@@ -71,7 +71,7 @@
     "jumpBoxVmName": "jumpbox01",
     "dcVmName": "dc01",
     "dcIpAddress": "10.0.1.10",
-    "dcDscConfigName": "SampleConfig",
+    "dcDscConfigName": "SampleConfig.localhost",
     "jamaVmName": "jama01",
     "jamaIpAddress": "10.0.2.10",
     "tfsVmName": "tfs01",
