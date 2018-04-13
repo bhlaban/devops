@@ -169,20 +169,14 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "configurationArguments": {
-            {
-              "Name": "RegistrationKey",
-              "Value": {
-                "UserName": "PLACEHOLDER_DONOTUSE",
-                "Password": "PrivateSettingsRef:registrationKeyPrivate"
-              }
-            },
+            "RegistrationKey": "PrivateSettingsRef:registrationKeyPrivate",
             "RegistrationUrl": "[parameters('automationRegistrationUrl')]",
             "NodeConfigurationName": "[parameters('automationDscConfigName')]"
           }
         },
         "protectedSettings": {
           "Items": {
-            "registrationKeyPrivate": "[parameters('automationRegistrationKey']"
+            "registrationKeyPrivate": "[parameters('automationRegistrationKey')]"
           }
         }
       }
