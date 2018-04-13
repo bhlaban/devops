@@ -58,7 +58,7 @@
       }
     },
     "automationRegistrationKey": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "The automation registration key"
       }
@@ -169,14 +169,9 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "configurationArguments": {
-            "RegistrationKey": "PrivateSettingsRef:registrationKeyPrivate",
+            "RegistrationKey": "[parameters('automationRegistrationKey')]",
             "RegistrationUrl": "[parameters('automationRegistrationUrl')]",
             "NodeConfigurationName": "[parameters('automationDscConfigName')]"
-          }
-        },
-        "protectedSettings": {
-          "Items": {
-            "registrationKeyPrivate": "[parameters('automationRegistrationKey')]"
           }
         }
       }

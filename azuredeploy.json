@@ -42,7 +42,7 @@
       "defaultValue": "https://usge-agentservice-prod-1.azure-automation.us/accounts/11afbcd8-4ece-4788-a1f5-05d3677d67f8"
     },
     "automationRegistrationKey": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "The automation registration key"
       }
