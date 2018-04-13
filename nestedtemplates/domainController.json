@@ -168,11 +168,11 @@
         "typeHandlerVersion": "2.73",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "configurationArguments": {
-            "RegistrationKey": "PrivateSettingsRef:registrationKeyPrivate",
-            "RegistrationUrl": "[parameters('automationRegistrationUrl')]",
-            "NodeConfigurationName": "[parameters('automationDscConfigName')]"
-          }
+          "configurationArguments": [
+            { "RegistrationKey": "PrivateSettingsRef:registrationKeyPrivate" },
+            { "RegistrationUrl": "[parameters('automationRegistrationUrl')]" },
+            { "NodeConfigurationName": "[parameters('automationDscConfigName')]" }
+          ]
         },
         "protectedSettings": {
           "Items": {
