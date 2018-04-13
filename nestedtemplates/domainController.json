@@ -162,7 +162,7 @@
     {
       "name": "[concat(parameters('vmName'),'/ConfigureDC')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2017-12-01",
+      "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
