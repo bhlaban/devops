@@ -51,16 +51,10 @@
         "description": "The name of the subnet to connect to"
       }
     },
-    "automationRegistrationUrl": {
+    "automationAccountName": {
       "type": "string",
       "metadata": {
-        "description": "The automation registration URL"
-      }
-    },
-    "automationRegistrationKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The automation registration key"
+        "description": "The name of the automation account"
       }
     },
     "automationDscConfigName": {
@@ -157,7 +151,7 @@
     {
       "name": "[concat(parameters('vmName'),'/ConfigureDC')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2017-03-30",
+      "apiVersion": "2017-12-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
@@ -167,12 +161,47 @@
         "type": "DSC",
         "typeHandlerVersion": "2.73",
         "autoUpgradeMinorVersion": true,
-        "settings": {
-          "configurationArguments": {
-            "RegistrationKey": "[parameters('automationRegistrationKey')]",
-            "RegistrationUrl": "[parameters('automationRegistrationUrl')]",
-            "NodeConfigurationName": "[parameters('automationDscConfigName')]"
+        "protectedSettings": {
+          "Items": {
+            "registrationKeyPrivate": "listKeys(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2018-01-15').Keys[0].value]"
           }
+        },
+        "settings": {
+          "Properties": [
+            {
+              "Name": "RegistrationKey",
+              "Value": {
+                "UserName": "PLACEHOLDER_DONOTUSE",
+                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+              },
+              "TypeName": "System.Management.Automation.PSCredential"
+            },
+            {
+                "Name": "RegistrationUrl",
+                "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))).registrationUrl]",
+                "TypeName": "System.String"
+            },
+            {
+                "Name": "NodeConfigurationName",
+                "Value": "[parameters('automationDscConfigName')]",
+                "TypeName": "System.String"
+            },
+            {
+              "Name": "ConfigurationMode",
+              "Value": "ApplyandAutoCorrect",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "RebootNodeIfNeeded",
+              "Value": true,
+              "TypeName": "System.Boolean"
+            },
+            {
+              "Name": "ActionAfterReboot",
+              "Value": "ContinueConfiguration",
+              "TypeName": "System.String"
+            }
+          ]
         }
       }
     }
