@@ -81,6 +81,17 @@
   },
   "resources": [
     {
+      "name": "[parameters('automationAccountName')]",
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiVersion": "2018-01-15",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "name": "OMS"
+        }
+      }
+    },
+    {
       "name": "[variables('networkInterfaceName')]",
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2017-09-01",
@@ -177,14 +188,14 @@
               "TypeName": "System.Management.Automation.PSCredential"
             },
             {
-                "Name": "RegistrationUrl",
-                "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))).registrationUrl]",
-                "TypeName": "System.String"
+              "Name": "RegistrationUrl",
+              "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))).registrationUrl]",
+              "TypeName": "System.String"
             },
             {
-                "Name": "NodeConfigurationName",
-                "Value": "[parameters('automationDscConfigName')]",
-                "TypeName": "System.String"
+              "Name": "NodeConfigurationName",
+              "Value": "[parameters('automationDscConfigName')]",
+              "TypeName": "System.String"
             },
             {
               "Name": "ConfigurationMode",
