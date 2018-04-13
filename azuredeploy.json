@@ -34,18 +34,12 @@
       },
       "defaultValue": "Standard_D4_v3"
     },
-    "automationRegistrationUrl": {
+    "automationAccountName": {
       "type": "string",
       "metadata": {
-        "description": "The automation registration URL"
+        "description": "The name of the automation account"
       },
-      "defaultValue": "https://usge-agentservice-prod-1.azure-automation.us/accounts/11afbcd8-4ece-4788-a1f5-05d3677d67f8"
-    },
-    "automationRegistrationKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The automation registration key"
-      }
+      "defaultValue": "automation"
     },
     "_artifactsLocation": {
       "type": "string",
@@ -160,11 +154,8 @@
           "existingSubnetName": {
             "value": "[variables('directorySubnetName')]"
           },
-          "automationRegistrationUrl": {
-            "value": "[parameters('automationRegistrationUrl')]"
-          },
-          "automationRegistrationKey": {
-            "value": "[parameters('automationRegistrationKey')]"
+          "automationAccountName": {
+            "value": "[parameters('automationAccountName')]"
           },
           "automationDscConfigName": {
             "value": "[variables('dcDscConfigName')]"
