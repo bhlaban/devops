@@ -57,7 +57,8 @@
     }
   },
   "variables": {
-    "vnetName": "devops-vnet",
+    "automationAccountName": "automation",
+    "vnetName": "vnet",
     "managementSubnetName": "management-subnet",
     "directorySubnetName": "directory-subnet",
     "webSubnetName": "web-subnet",
@@ -73,6 +74,7 @@
     "sqlVmName": "sql01",
     "sqlIpAddress": "10.0.3.10",
     "nestedTemplates": {
+      "automationAccountTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/automationAccount.json', parameters('_artifactsLocationSasToken')))]",
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/domainController.json', parameters('_artifactsLocationSasToken')))]",
       "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
@@ -82,6 +84,30 @@
     }
   },
   "resources": [
+    {
+      "name": "AutomationAccount",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "comments": "This creates the automation account",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').automationAccountTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          }
+        }
+      }
+    },
     {
       "name": "Network",
       "type": "Microsoft.Resources/deployments",
