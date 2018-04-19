@@ -28,7 +28,7 @@
     {
       "name": "[parameters('automationAccountName')]",
       "type": "Microsoft.Automation/automationAccounts",
-      "apiversion": "2018-01-15",
+      "apiversion": "2017-05-15-preview",
       "location": "[resourceGroup().location]",
       "properties": {
         "sku": {
