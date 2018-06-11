@@ -51,18 +51,6 @@
         "description": "The name of the subnet to connect to"
       }
     },
-    "automationAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the automation account"
-      }
-    },
-    "automationDscConfigName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the DSC configuration to apply using automation"
-      }
-    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -80,17 +68,6 @@
     "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]"
   },
   "resources": [
-    {
-      "name": "[parameters('automationAccountName')]",
-      "type": "Microsoft.Automation/automationAccounts",
-      "apiVersion": "2017-05-15-preview",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "sku": {
-          "name": "OMS"
-        }
-      }
-    },
     {
       "name": "[variables('networkInterfaceName')]",
       "type": "Microsoft.Network/networkInterfaces",
@@ -165,54 +142,28 @@
       "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
       ],
       "properties": {
         "publisher": "Microsoft.Powershell",
         "type": "DSC",
-        "typeHandlerVersion": "2.73",
+        "typeHandlerVersion": "2.19",
         "autoUpgradeMinorVersion": true,
-        "protectedSettings": {
-          "Items": {
-            "registrationKeyPrivate": "listKeys(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2018-01-15').Keys[0].value]"
+        "settings": {
+          "ModulesUrl": "[concat(parameters('_artifactsLocation'), '/DSC/ConfigureDC.ps1.zip', parameters('_artifactsLocationSasToken'))]",
+          "ConfigurationFunction": "ConfigureDC.ps1\\ConfigureDC",
+          "Properties": {
+            "DomainName": "[parameters('domainName')]",
+            "AdminCreds": {
+              "UserName": "[parameters('adminUsername')]",
+              "Password": "PrivateSettingsRef:AdminPassword"
+            }
           }
         },
-        "settings": {
-          "Properties": [
-            {
-              "Name": "RegistrationKey",
-              "Value": {
-                "UserName": "PLACEHOLDER_DONOTUSE",
-                "Password": "PrivateSettingsRef:registrationKeyPrivate"
-              },
-              "TypeName": "System.Management.Automation.PSCredential"
-            },
-            {
-              "Name": "RegistrationUrl",
-              "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))).registrationUrl]",
-              "TypeName": "System.String"
-            },
-            {
-              "Name": "NodeConfigurationName",
-              "Value": "[parameters('automationDscConfigName')]",
-              "TypeName": "System.String"
-            },
-            {
-              "Name": "ConfigurationMode",
-              "Value": "ApplyandAutoCorrect",
-              "TypeName": "System.String"
-            },
-            {
-              "Name": "RebootNodeIfNeeded",
-              "Value": true,
-              "TypeName": "System.Boolean"
-            },
-            {
-              "Name": "ActionAfterReboot",
-              "Value": "ContinueConfiguration",
-              "TypeName": "System.String"
-            }
-          ]
+        "protectedSettings": {
+          "Items": {
+            "AdminPassword": "[parameters('adminPassword')]"
+          }
         }
       }
     }
