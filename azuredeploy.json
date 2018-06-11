@@ -143,12 +143,6 @@
           "existingSubnetName": {
             "value": "[variables('directorySubnetName')]"
           },
-          "automationAccountName": {
-            "value": "[parameters('automationAccountName')]"
-          },
-          "automationDscConfigName": {
-            "value": "[variables('dcDscConfigName')]"
-          },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
           },
