@@ -34,13 +34,6 @@
       },
       "defaultValue": "Standard_D4_v3"
     },
-    "automationAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the automation account"
-      },
-      "defaultValue": "automation"
-    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -57,7 +50,6 @@
     }
   },
   "variables": {
-    "automationAccountName": "automation",
     "vnetName": "vnet",
     "managementSubnetName": "management-subnet",
     "directorySubnetName": "directory-subnet",
@@ -66,44 +58,284 @@
     "jumpBoxVmName": "jumpbox01",
     "dcVmName": "dc01",
     "dcIpAddress": "10.0.1.10",
-    "dcDscConfigName": "SampleConfig.localhost",
-    "jamaVmName": "jama01",
-    "jamaIpAddress": "10.0.2.10",
     "tfsVmName": "tfs01",
     "tfsIpAddress": "10.0.2.20",
     "sqlVmName": "sql01",
     "sqlIpAddress": "10.0.3.10",
     "nestedTemplates": {
-      "automationAccountTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/automationAccount.json', parameters('_artifactsLocationSasToken')))]",
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/domainController.json', parameters('_artifactsLocationSasToken')))]",
       "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
       "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
-      "jamaTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jama.json', parameters('_artifactsLocationSasToken')))]",
       "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/tfs.json', parameters('_artifactsLocationSasToken')))]"
     }
   },
   "resources": [
     {
-      "name": "AutomationAccount",
+      "name": "Network",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
-      "comments": "This creates the automation account",
+      "comments": "This creates the virtual network and subnets",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').automationAccountTemplate]",
+          "uri": "[variables('nestedTemplates').networkTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "automationAccountName": {
-            "value": "[variables('automationAccountName')]"
+          "vnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "managementSubnetName": {
+            "value": "[variables('managementSubnetName')]"
+          },
+          "directorySubnetName": {
+            "value": "[variables('directorySubnetName')]"
+          },
+          "webSubnetName": {
+            "value": "[variables('webSubnetName')]"
+          },
+          "dataSubnetName": {
+            "value": "[variables('dataSubnetName')]"
+          },
+          "dnsServers": {
+            "value": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DomainController",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the Domain Controller VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/Network"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').domainControllerTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('dcVmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "ipAddress": {
+            "value": "[variables('dcIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('directorySubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[parameters('automationAccountName')]"
+          },
+          "automationDscConfigName": {
+            "value": "[variables('dcDscConfigName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "UpdateDNS",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "Updates the DNS setting on the vNet to use our new DC",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/DomainController"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').networkTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "managementSubnetName": {
+            "value": "[variables('managementSubnetName')]"
+          },
+          "directorySubnetName": {
+            "value": "[variables('directorySubnetName')]"
+          },
+          "webSubnetName": {
+            "value": "[variables('webSubnetName')]"
+          },
+          "dataSubnetName": {
+            "value": "[variables('dataSubnetName')]"
+          },
+          "dnsServers": {
+            "value": [
+              "[variables('dcIpAddress')]"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "JumpBox",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the JumpBox VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/UpdateDNS"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').jumpBoxTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('jumpBoxVmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('managementSubnetName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "SQLServer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the SQL Server VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/UpdateDNS"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').sqlTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('sqlVmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "ipAddress": {
+            "value": "[variables('sqlIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('dataSubnetName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TfsServer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the TFS VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SQLServer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('nestedTemplates').tfsTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('tfsVmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "ipAddress": {
+            "value": "[variables('tfsIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('webSubnetName')]"
+          },
+          "existingSqlInstance": {
+            "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
           }
         }
       }
