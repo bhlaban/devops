@@ -20,10 +20,10 @@
         "description": "The name of subnet to create for directory tier"
       }
     },
-    "webSubnetName": {
+    "applicationSubnetName": {
       "type": "string",
       "metadata": {
-        "description": "The name of subnet to create for web tier"
+        "description": "The name of subnet to create for application tier"
       }
     },
     "dataSubnetName": {
@@ -42,7 +42,7 @@
   "variables": {
     "managementNetworkSecurityGroupName": "[concat(parameters('managementSubnetName'), '-nsg')]",
     "directoryNetworkSecurityGroupName": "[concat(parameters('directorySubnetName'), '-nsg')]",
-    "webNetworkSecurityGroupName": "[concat(parameters('webSubnetName'), '-nsg')]",
+    "applicationNetworkSecurityGroupName": "[concat(parameters('applicationSubnetName'), '-nsg')]",
     "dataNetworkSecurityGroupName": "[concat(parameters('dataSubnetName'), '-nsg')]"
   },
   "resources": [
@@ -83,7 +83,7 @@
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[variables('webNetworkSecurityGroupName')]",
+      "name": "[variables('applicationNetworkSecurityGroupName')]",
       "apiVersion": "2018-01-01",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -124,7 +124,7 @@
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('managementNetworkSecurityGroupName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('directoryNetworkSecurityGroupName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('webNetworkSecurityGroupName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('applicationNetworkSecurityGroupName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('dataNetworkSecurityGroupName'))]"
       ],
       "properties": {
@@ -153,11 +153,11 @@
             }
           },
           {
-            "name": "[parameters('webSubnetName')]",
+            "name": "[parameters('applicationSubnetName')]",
             "properties": {
               "addressPrefix": "10.0.2.0/24",
               "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('webNetworkSecurityGroupName'))]"
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('applicationNetworkSecurityGroupName'))]"
               }
             }
           },

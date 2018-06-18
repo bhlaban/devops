@@ -53,7 +53,7 @@
     "vnetName": "vnet",
     "managementSubnetName": "management-subnet",
     "directorySubnetName": "directory-subnet",
-    "webSubnetName": "web-subnet",
+    "applicationSubnetName": "application-subnet",
     "dataSubnetName": "data-subnet",
     "jumpBoxVmName": "jumpbox01",
     "dcVmName": "dc01",
@@ -92,8 +92,8 @@
           "directorySubnetName": {
             "value": "[variables('directorySubnetName')]"
           },
-          "webSubnetName": {
-            "value": "[variables('webSubnetName')]"
+          "applicationSubnetName": {
+            "value": "[variables('applicationSubnetName')]"
           },
           "dataSubnetName": {
             "value": "[variables('dataSubnetName')]"
@@ -176,8 +176,8 @@
           "directorySubnetName": {
             "value": "[variables('directorySubnetName')]"
           },
-          "webSubnetName": {
-            "value": "[variables('webSubnetName')]"
+          "applicationSubnetName": {
+            "value": "[variables('applicationSubnetName')]"
           },
           "dataSubnetName": {
             "value": "[variables('dataSubnetName')]"
@@ -320,7 +320,7 @@
             "value": "[variables('vnetName')]"
           },
           "existingSubnetName": {
-            "value": "[variables('webSubnetName')]"
+            "value": "[variables('applicationSubnetName')]"
           },
           "existingSqlInstance": {
             "value": "[concat(variables('sqlVmName'), '.', parameters('domainName'))]"
