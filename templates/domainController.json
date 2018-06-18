@@ -27,12 +27,6 @@
         "description": "The password for the Administrator account"
       }
     },
-    "domainName": {
-      "type": "string",
-      "metadata": {
-        "description": "The FQDN of the Active Directory Domain to be created"
-      }
-    },
     "ipAddress": {
       "type": "string",
       "metadata": {
@@ -133,37 +127,6 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('networkInterfaceName'))]"
             }
           ]
-        }
-      }
-    },
-    {
-      "name": "[concat(parameters('vmName'),'/ConfigureDC')]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2017-03-30",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Powershell",
-        "type": "DSC",
-        "typeHandlerVersion": "2.19",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "ModulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/ConfigureDC.ps1.zip', parameters('_artifactsLocationSasToken'))]",
-          "ConfigurationFunction": "ConfigureDC.ps1\\ConfigureDC",
-          "Properties": {
-            "DomainName": "[parameters('domainName')]",
-            "AdminCreds": {
-              "UserName": "[parameters('adminUsername')]",
-              "Password": "PrivateSettingsRef:AdminPassword"
-            }
-          }
-        },
-        "protectedSettings": {
-          "Items": {
-            "AdminPassword": "[parameters('adminPassword')]"
-          }
         }
       }
     }
