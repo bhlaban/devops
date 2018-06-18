@@ -40,17 +40,21 @@
     "dcIpAddress": "10.0.1.10",
     "dcVmName": "dc01",
     "dcVmSize": "Standard_D4_v3",
-    "tfsIpAddress": "10.0.2.20",
-    "tfsVmName": "tfs01",
-    "tfsVmSize": "Standard_D4_v3",
     "sqlIpAddress": "10.0.3.10",
     "sqlVmName": "sql01",
     "sqlVmSize": "Standard_D4_v3",
+    "jamaIpAddress": "10.0.2.10",
+    "jamaVmName": "jama01",
+    "jamaVmSize": "Standard_D4_v3",
+    "tfsIpAddress": "10.0.2.20",
+    "tfsVmName": "tfs01",
+    "tfsVmSize": "Standard_D4_v3",
     "templates": {
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/domainController.json', parameters('_artifactsLocationSasToken')))]",
       "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
       "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
+      "jamaTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jama.json', parameters('_artifactsLocationSasToken')))]",
       "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/tfs.json', parameters('_artifactsLocationSasToken')))]"
     }
   },
@@ -210,6 +214,51 @@
           },
           "existingSubnetName": {
             "value": "[variables('dataSubnetName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "Jama",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the Jama VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/Network"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('templates').jamaTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('jamaVmName')]"
+          },
+          "vmSize": {
+            "value": "[variables('jamaVmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "ipAddress": {
+            "value": "[variables('jamaIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('applicationSubnetName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
