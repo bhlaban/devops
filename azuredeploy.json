@@ -62,12 +62,12 @@
     "tfsIpAddress": "10.0.2.20",
     "sqlVmName": "sql01",
     "sqlIpAddress": "10.0.3.10",
-    "nestedTemplates": {
-      "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
-      "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/domainController.json', parameters('_artifactsLocationSasToken')))]",
-      "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
-      "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
-      "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/tfs.json', parameters('_artifactsLocationSasToken')))]"
+    "templates": {
+      "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
+      "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/domainController.json', parameters('_artifactsLocationSasToken')))]",
+      "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
+      "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
+      "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/tfs.json', parameters('_artifactsLocationSasToken')))]"
     }
   },
   "resources": [
@@ -79,7 +79,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').networkTemplate]",
+          "uri": "[variables('templates').networkTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -115,7 +115,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').domainControllerTemplate]",
+          "uri": "[variables('templates').domainControllerTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -163,7 +163,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').networkTemplate]",
+          "uri": "[variables('templates').networkTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -201,7 +201,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').jumpBoxTemplate]",
+          "uri": "[variables('templates').jumpBoxTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -246,7 +246,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').sqlTemplate]",
+          "uri": "[variables('templates').sqlTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -294,7 +294,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('nestedTemplates').tfsTemplate]",
+          "uri": "[variables('templates').tfsTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
