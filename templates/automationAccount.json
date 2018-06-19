@@ -103,8 +103,7 @@
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').xActiveDirectory.name]",
                         "[variables('dscResources').xStorage.name]",
-                        "domainCredential",
-                        "safeModeCredential"
+                        "domainCredential"
                     ],
                     "properties": {
                         "state": "Published",
