@@ -2,118 +2,130 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure location to deploy all resources"
+      },
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "virtualNetworkAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the new virtual network "
+      },
+      "defaultValue": "10.0.0.0/16"
+    },
+    "virtualNetworkSubnet": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the subnet created in the new virtual network"
+      },
+      "defaultValue": "10.0.0.0/24"
+    },
+    "nicIPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP address of the new AD VM"
+      },
+      "defaultValue": "10.0.0.4"
+    },
     "adminUsername": {
       "type": "string",
       "metadata": {
-        "description": "The name of the administrator account to create"
+        "description": "The name of the Administrator of the new VM and Domain"
       }
     },
     "adminPassword": {
       "type": "securestring",
       "metadata": {
-        "description": "The password for the Administrator account"
+        "description": "The password for the Administrator account of the new VM and Domain"
       }
+    },
+    "safeModePassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password for the safe mode restore feature in the new domain"
+      }
+    },
+    "VMSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The size of the VM Created"
+      },
+      "defaultValue": "Standard_DS2_V2"
+    },
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "The full qualified domain name to be created"
+      },
+      "defaultValue": "contoso.local"
     },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
-        "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+        "description": "Path to the nested templates used in this deployment"
       },
-      "defaultValue": "https://raw.githubusercontent.com/bhlaban/devops/master/"
+      "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-automation-configuration/"
     },
     "_artifactsLocationSasToken": {
-      "type": "securestring",
+      "type": "string",
       "metadata": {
-        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+        "description": "SAS token to access artifacts location, if required"
       },
       "defaultValue": ""
+    },
+    "compileName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique value to identify compilation job"
+      },
+      "defaultValue": "[guid(resourceGroup().id, deployment().name)]"
     }
   },
   "variables": {
-    "vnetName": "vnet",
-    "managementSubnetName": "management-subnet",
-    "directorySubnetName": "directory-subnet",
-    "applicationSubnetName": "application-subnet",
-    "dataSubnetName": "data-subnet",
-    "jumpBoxVmName": "jumpbox01",
-    "jumpBoxVmSize": "Standard_D4_v3",
-    "dcIpAddress": "10.0.1.10",
-    "dcVmName": "dc01",
-    "dcVmSize": "Standard_D4_v3",
-    "sqlIpAddress": "10.0.3.10",
-    "sqlVmName": "sql01",
-    "sqlVmSize": "Standard_D4_v3",
-    "jamaIpAddress": "10.0.2.10",
-    "jamaVmName": "jama01",
-    "jamaVmSize": "Standard_D4_v3",
-    "tfsIpAddress": "10.0.2.20",
-    "tfsVmName": "tfs01",
-    "tfsVmSize": "Standard_D4_v3",
-    "registrationKey": "elapR/1I9JSlxiOJo79LzrpGTBWgMNfoTHB0SCz/MVtN9pLsh72qiSd+vSBOc5eEZ3aQv0T5z3OmjvHVM6HBHg==",
-    "registrationUrl": "https://usge-agentservice-prod-1.azure-automation.us/accounts/e1b09859-6e57-4d55-a934-141c504b144d",
-    "templates": {
-      "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
-      "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/domainController.json', parameters('_artifactsLocationSasToken')))]",
-      "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
-      "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
-      "jamaTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jama.json', parameters('_artifactsLocationSasToken')))]",
-      "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/tfs.json', parameters('_artifactsLocationSasToken')))]"
-    }
+    "automationAccountName": "[concat('DSC-',take(guid(resourceGroup().id),5))]",
+    "publicIPAddressName": "PIP",
+    "publicIPAddressType": "Dynamic",
+    "virtualNetworkName": "Network",
+    "virtualNetworkSubnetName": "Subnet",
+    "virtualNetworkSubnets": [
+      {
+        "name": "[variables('virtualNetworkSubnetName')]",
+        "properties": {
+          "addressPrefix": "[parameters('virtualNetworkSubnet')]"
+        }
+      }
+    ],
+    "VMName": "Server",
+    "nicName": "NIC",
+    "nicSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('virtualNetworkSubnetName'))]",
+    "provisionConfigurationURL": "[uri(parameters('_artifactsLocation'), concat('nested/provisionConfiguration.json', parameters('_artifactsLocationSasToken')))]",
+    "provisionNetworkURL": "[uri(parameters('_artifactsLocation'), concat('nested/provisionNetwork.json', parameters('_artifactsLocationSasToken')))]",
+    "provisionServerUrl": "[uri(parameters('_artifactsLocation'), concat('nested/provisionServer.json', parameters('_artifactsLocationSasToken')))]",
+    "provisionDNSUrl": "[uri(parameters('_artifactsLocation'), concat('nested/provisionDNS.json', parameters('_artifactsLocationSasToken')))]"
   },
   "resources": [
     {
-      "name": "Network",
+      "name": "provisionConfiguration",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-09-01",
-      "comments": "This creates the virtual network and subnets",
+      "apiVersion": "2018-02-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('templates').networkTemplate]",
+          "uri": "[variables('provisionConfigurationURL')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vnetName": {
-            "value": "[variables('vnetName')]"
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
           },
-          "managementSubnetName": {
-            "value": "[variables('managementSubnetName')]"
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
           },
-          "directorySubnetName": {
-            "value": "[variables('directorySubnetName')]"
-          },
-          "applicationSubnetName": {
-            "value": "[variables('applicationSubnetName')]"
-          },
-          "dataSubnetName": {
-            "value": "[variables('dataSubnetName')]"
-          },
-          "dnsServers": {
-            "value": []
-          }
-        }
-      }
-    },
-    {
-      "name": "DomainController",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "comments": "This creates the Domain Controller VM",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/Network"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('templates').domainControllerTemplate]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "vmName": {
-            "value": "[variables('dcVmName')]"
-          },
-          "vmSize": {
-            "value": "[variables('dcVmSize')]"
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -121,50 +133,85 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "ipAddress": {
-            "value": "[variables('dcIpAddress')]"
+          "safeModePassword": {
+            "value": "[parameters('safeModePassword')]"
           },
-          "existingVnetName": {
-            "value": "[variables('vnetName')]"
+          "domainName": {
+            "value": "[parameters('domainName')]"
           },
-          "existingSubnetName": {
-            "value": "[variables('directorySubnetName')]"
+          "location": {
+            "value": "[parameters('location')]"
           },
-          "registrationKey": {
-            "value": "[variables('registrationKey')]"
-          },
-          "registrationUrl": {
-            "value": "[variables('registrationUrl')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "compileName": {
+            "value": "[parameters('compileName')]"
           }
         }
       }
     },
     {
-      "name": "JumpBox",
+      "name": "provisionNetwork",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "comments": "This creates the JumpBox VM",
+      "apiVersion": "2018-02-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('provisionNetworkURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "virtualNetworkAddressRange": {
+            "value": "[parameters('virtualNetworkAddressRange')]"
+          },
+          "virtualNetworkSubnets": {
+            "value": "[variables('virtualNetworkSubnets')]"
+          },
+          "nicName": {
+            "value": "[variables('nicName')]"
+          },
+          "nicIPAddress": {
+            "value": "[parameters('nicIPAddress')]"
+          },
+          "nicSubnetRef": {
+            "value": "[variables('nicSubnetRef')]"
+          },
+          "publicIPAddressName": {
+            "value": "[variables('publicIPAddressName')]"
+          },
+          "publicIPAddressType": {
+            "value": "[variables('publicIPAddressType')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "provisionServer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-02-01",
       "dependsOn": [
-        "Microsoft.Resources/deployments/Network"
+        "provisionNetwork",
+        "provisionConfiguration"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('templates').jumpBoxTemplate]",
+          "uri": "[variables('provisionServerUrl')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vmName": {
-            "value": "[variables('jumpBoxVmName')]"
+          "location": {
+            "value": "[parameters('location')]"
           },
-          "vmSize": {
-            "value": "[variables('jumpBoxVmSize')]"
+          "VMName": {
+            "value": "[variables('VMName')]"
+          },
+          "VMSize": {
+            "value": "[parameters('VMSize')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -172,155 +219,49 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "existingVnetName": {
-            "value": "[variables('vnetName')]"
+          "NicName": {
+            "value": "[variables('NicName')]"
           },
-          "existingSubnetName": {
-            "value": "[variables('managementSubnetName')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
           }
         }
       }
     },
     {
-      "name": "SQLServer",
+      "name": "provisionDNS",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "comments": "This creates the SQL Server VM",
+      "apiVersion": "2018-02-01",
       "dependsOn": [
-        "Microsoft.Resources/deployments/Network"
+        "provisionServer"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('templates').sqlTemplate]",
+          "uri": "[variables('provisionDNSUrl')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vmName": {
-            "value": "[variables('sqlVmName')]"
+          "location": {
+            "value": "[parameters('location')]"
           },
-          "vmSize": {
-            "value": "[variables('sqlVmSize')]"
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
           },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
+          "virtualNetworkAddressRange": {
+            "value": "[parameters('virtualNetworkAddressRange')]"
           },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
+          "virtualNetworkSubnets": {
+            "value": "[variables('virtualNetworkSubnets')]"
           },
-          "ipAddress": {
-            "value": "[variables('sqlIpAddress')]"
-          },
-          "existingVnetName": {
-            "value": "[variables('vnetName')]"
-          },
-          "existingSubnetName": {
-            "value": "[variables('dataSubnetName')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "Jama",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "comments": "This creates the Jama VM",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/Network"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('templates').jamaTemplate]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "vmName": {
-            "value": "[variables('jamaVmName')]"
-          },
-          "vmSize": {
-            "value": "[variables('jamaVmSize')]"
-          },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "ipAddress": {
-            "value": "[variables('jamaIpAddress')]"
-          },
-          "existingVnetName": {
-            "value": "[variables('vnetName')]"
-          },
-          "existingSubnetName": {
-            "value": "[variables('applicationSubnetName')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "TFS",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "comments": "This creates the TFS VM",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/Network"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('templates').tfsTemplate]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "vmName": {
-            "value": "[variables('tfsVmName')]"
-          },
-          "vmSize": {
-            "value": "[variables('tfsVmSize')]"
-          },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "ipAddress": {
-            "value": "[variables('tfsIpAddress')]"
-          },
-          "existingVnetName": {
-            "value": "[variables('vnetName')]"
-          },
-          "existingSubnetName": {
-            "value": "[variables('applicationSubnetName')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "dnsAddress": {
+            "value": [
+              "[parameters('nicIPAddress')]"
+            ]
           }
         }
       }
     }
-  ]
+  ],
+  "outputs": {}
 }
