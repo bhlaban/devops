@@ -4,11 +4,11 @@ configuration DomainControllerConfig
    (
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [String] $DomainName,
+        [String] $DomainName = "seicdevops.com",
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [String] $CredentialName
+        [String] $CredentialName = "DomainAdmin"
     )
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xNetworking, xPendingReboot, xStorage
@@ -54,19 +54,6 @@ configuration DomainControllerConfig
             DependsOn = "[WindowsFeature]DNS"
         }
 
-        xWaitforDisk Disk3
-        {
-            DiskId = 3
-            RetryIntervalSec = 30
-            RetryCount = 20
-        }
-
-        xDisk ADDataDisk {
-            DiskId = 3
-            DriveLetter = "F"
-            DependsOn = "[xWaitForDisk]Disk3"
-        }
-
         WindowsFeature ADDSInstall
         {
             Ensure = "Present"
@@ -93,10 +80,10 @@ configuration DomainControllerConfig
             DomainName = $DomainName
             DomainAdministratorCredential = $DomainCreds
             SafemodeAdministratorPassword = $DomainCreds
-            DatabasePath = "F:\NTDS"
-            LogPath = "F:\NTDS"
-            SysvolPath = "F:\SYSVOL"
-            DependsOn = @("[WindowsFeature]ADDSInstall", "[xDisk]ADDataDisk")
+            DatabasePath = "C:\NTDS"
+            LogPath = "C:\NTDS"
+            SysvolPath = "C:\SYSVOL"
+            DependsOn = @("[WindowsFeature]ADDSInstall")
         }
 
         xPendingReboot RebootAfterPromotion{
