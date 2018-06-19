@@ -127,6 +127,9 @@
           "existingVnetName": {
             "value": "[variables('vnetName')]"
           },
+          "existingSubnetName": {
+            "value": "[variables('directorySubnetName')]"
+          },
           "registrationKey": {
             "value": "[variables('registrationKey')]"
           },
