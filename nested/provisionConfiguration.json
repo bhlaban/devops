@@ -65,7 +65,7 @@
         {
           "name": "[variables('dscResources').xActiveDirectory.name]",
           "type": "modules",
-          "apiVersion": "2018-01-15",
+          "apiVersion": "2015-10-31",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[parameters('AutomationAccountName')]"
@@ -79,7 +79,7 @@
         {
           "name": "[variables('dscResources').xStorage.name]",
           "type": "modules",
-          "apiVersion": "2018-01-15",
+          "apiVersion": "2015-10-31",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[parameters('AutomationAccountName')]"
@@ -93,7 +93,7 @@
         {
           "name": "domainCredential",
           "type": "credentials",
-          "apiVersion": "2018-01-15",
+          "apiVersion": "2015-10-31",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[parameters('AutomationAccountName')]"
@@ -106,7 +106,7 @@
         {
           "name": "safeModeCredential",
           "type": "credentials",
-          "apiVersion": "2018-01-15",
+          "apiVersion": "2015-10-31",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[parameters('AutomationAccountName')]"
@@ -119,7 +119,7 @@
         {
           "name": "[variables('dscConfigurations').DomainControllerConfig.name]",
           "type": "configurations",
-          "apiVersion": "2018-01-15",
+          "apiVersion": "2015-10-31",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[parameters('AutomationAccountName')]",
@@ -140,7 +140,7 @@
         {
           "name": "[parameters('compileName')]",
           "type": "compilationjobs",
-          "apiVersion": "2018-01-15",
+          "apiVersion": "2015-10-31",
           "tags": {},
           "dependsOn": [
             "[parameters('AutomationAccountName')]",
