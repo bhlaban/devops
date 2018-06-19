@@ -109,10 +109,7 @@
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-disk-os')]",
-            "createOption": "FromImage",
-            "managedDisk": {
-              "storageAccountType": "Premium_LRS"
-            }
+            "createOption": "FromImage"
           }
         },
         "networkProfile": {

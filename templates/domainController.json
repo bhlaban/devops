@@ -108,7 +108,6 @@
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'),'-disk-os')]",
-            "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
