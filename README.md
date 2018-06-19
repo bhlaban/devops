@@ -1,9 +1,9 @@
 # TFS Deployment with separate VM's for Domain Controller, SQL Server, and TFS
 
-<a href="https://portal.azure.com/#create/SEIC%20DevOps%20Network/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/DevNet/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/> 
 </a>
-<a href="https://portal.azure.us/#create/SEIC%20DevOps%20Network/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.us/#create/DevNet/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/AzureGov.png"/>
 </a>
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fbhlaban%2Fdevops%2Fmaster%2Fazuredeploy.json" target="_blank">
