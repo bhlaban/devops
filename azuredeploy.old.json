@@ -14,6 +14,12 @@
         "description": "The password for the Administrator account"
       }
     },
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "The fully qualified name of the AD domain to create"
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -30,6 +36,7 @@
     }
   },
   "variables": {
+    "automationAccountName": "automation",
     "vnetName": "vnet",
     "managementSubnetName": "management-subnet",
     "directorySubnetName": "directory-subnet",
@@ -52,6 +59,7 @@
     "registrationKey": "elapR/1I9JSlxiOJo79LzrpGTBWgMNfoTHB0SCz/MVtN9pLsh72qiSd+vSBOc5eEZ3aQv0T5z3OmjvHVM6HBHg==",
     "registrationUrl": "https://usge-agentservice-prod-1.azure-automation.us/accounts/e1b09859-6e57-4d55-a934-141c504b144d",
     "templates": {
+      "automationAccountTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/automationAccount.json', parameters('_artifactsLocationSasToken')))]",
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/domainController.json', parameters('_artifactsLocationSasToken')))]",
       "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
@@ -61,6 +69,38 @@
     }
   },
   "resources": [
+    {
+      "name": "AutomationAccount",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('templates').automationAccountTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
     {
       "name": "Network",
       "type": "Microsoft.Resources/deployments",
