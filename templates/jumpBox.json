@@ -63,11 +63,7 @@
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "seic-jumpbox",
-          "fqdn": "seic-jumpbox.usgovvirginia.cloudapp.usgovcloudapi.net"
-        }
+        "publicIPAllocationMethod": "Static"
       }
     },
     {

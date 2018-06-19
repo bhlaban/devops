@@ -6,7 +6,8 @@
       "type": "string",
       "metadata": {
         "description": "The name of the administrator account to create"
-      }
+      },
+      "defaultValue": "superuser"
     },
     "adminPassword": {
       "type": "securestring",
@@ -18,7 +19,8 @@
       "type": "string",
       "metadata": {
         "description": "The fully qualified name of the AD domain to create"
-      }
+      },
+      "defaultValue": "seicdevops.com"
     },
     "_artifactsLocation": {
       "type": "string",
