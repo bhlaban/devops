@@ -45,6 +45,18 @@
         "description": "The name of the subnet to connect to"
       }
     },
+    "registrationKey": {
+      "type": "string",
+      "metadata": {
+        "description": "The registration key for Azure Automation DSC"
+      }
+    },
+    "registrationUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The registration URL for Azure Automation DSC"
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -128,6 +140,44 @@
           ]
         }
       }
-    }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'),'/Microsoft.Powershell.DSC')]",
+      "apiVersion": "2017-12-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', parameters('VMName'))]"
+      ],
+      "properties": {
+          "publisher": "Microsoft.Powershell",
+          "type": "DSC",
+          "typeHandlerVersion": "2.76",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+              "protectedSettings": {
+                  "Items": {
+                      "registrationKeyPrivate": "[parameters('registrationKey')]"
+                  }
+              },
+              "publicSettings": {
+                  "configurationArguments": [{
+                          "Name": "RegistrationKey",
+                          "Value": {
+                              "UserName": "PLACEHOLDER_DONOTUSE",
+                              "Password": "PrivateSettingsRef:registrationKeyPrivate"
+                          }
+                      },
+                      {
+                          "RegistrationUrl": "[parameters('registrationUrl')]"
+                      },
+                      {
+                          "NodeConfigurationName": "DomainControllerConfig.localhost"
+                      }
+                  ]
+              }
+          }
+      }
+  }
   ]
 }

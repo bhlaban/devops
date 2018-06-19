@@ -49,6 +49,8 @@
     "tfsIpAddress": "10.0.2.20",
     "tfsVmName": "tfs01",
     "tfsVmSize": "Standard_D4_v3",
+    "registrationKey": "elapR/1I9JSlxiOJo79LzrpGTBWgMNfoTHB0SCz/MVtN9pLsh72qiSd+vSBOc5eEZ3aQv0T5z3OmjvHVM6HBHg==",
+    "registrationUrl": "https://usge-agentservice-prod-1.azure-automation.us/accounts/e1b09859-6e57-4d55-a934-141c504b144d",
     "templates": {
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/domainController.json', parameters('_artifactsLocationSasToken')))]",
@@ -125,8 +127,11 @@
           "existingVnetName": {
             "value": "[variables('vnetName')]"
           },
-          "existingSubnetName": {
-            "value": "[variables('directorySubnetName')]"
+          "registrationKey": {
+            "value": "[variables('registrationKey')]"
+          },
+          "registrationUrl": {
+            "value": "[variables('registrationUrl')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
