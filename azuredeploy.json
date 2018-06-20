@@ -85,14 +85,14 @@
           "automationAccountName": {
             "value": "[variables('automationAccountName')]"
           },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
-          },
-          "domainName": {
-            "value": "[parameters('domainName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
