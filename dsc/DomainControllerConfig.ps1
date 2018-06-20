@@ -1,95 +1,36 @@
 configuration DomainControllerConfig
 {
-   param
-   (
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String] $DomainName = "seicdevops.com",
+    $domainCredential = Get-AutomationPSCredential domainCredential
 
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String] $CredentialName = "DomainAdmin"
-    )
+    Import-DscResource -ModuleName @{ModuleName='xActiveDirectory';ModuleVersion='2.16.0.0';GUID='9FECD4F6-8F02-4707-99B3-539E940E9FF5'},@{ModuleName='xStorage';ModuleVersion='3.2.0.0';GUID='00d73ca1-58b5-46b7-ac1a-5bfcf5814faf'},'PSDesiredStateConfiguration'
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xNetworking, xPendingReboot, xStorage
-    
-    $DomainCreds = Get-AutomationPSCredential -Name $CredentialName
-
-    Node localhost
+    Node $AllNodes.NodeName
     {
-        LocalConfigurationManager
-        {
-            RebootNodeIfNeeded = $true
-        }
-
-        WindowsFeature DNS
-        {
-            Ensure = "Present"
-            Name = "DNS"
-        }
-
-        Script EnableDNSDiags
-        {
-      	    SetScript = {
-                Set-DnsServerDiagnostics -All $true
-                Write-Verbose -Verbose "Enabling DNS client diagnostics"
-            }
-            GetScript =  { @{} }
-            TestScript = { $false }
-            DependsOn = "[WindowsFeature]DNS"
-        }
-
-        WindowsFeature DnsTools
-        {
-            Ensure = "Present"
-            Name = "RSAT-DNS-Server"
-            DependsOn = "[WindowsFeature]DNS"
-        }
-
-        xDnsServerAddress DnsServerAddress
-        {
-            Address        = '127.0.0.1'
-            InterfaceAlias = 'Ethernet 3'
-            AddressFamily  = 'IPv4'
-            DependsOn = "[WindowsFeature]DNS"
-        }
-
         WindowsFeature ADDSInstall
         {
-            Ensure = "Present"
-            Name = "AD-Domain-Services"
-            DependsOn="[WindowsFeature]DNS"
+            Ensure = 'Present'
+            Name = 'AD-Domain-Services'
         }
-
-        WindowsFeature ADDSTools
+        xWaitforDisk Disk2
         {
-            Ensure = "Present"
-            Name = "RSAT-ADDS-Tools"
-            DependsOn = "[WindowsFeature]ADDSInstall"
+             DiskId = 2
+             RetryIntervalSec = 10
+             RetryCount = 30
         }
-
-        WindowsFeature ADAdminCenter
+        xDisk DiskF
         {
-            Ensure = "Present"
-            Name = "RSAT-AD-AdminCenter"
-            DependsOn = "[WindowsFeature]ADDSTools"
+             DiskId = 2
+             DriveLetter = 'F'
         }
-
-        xADDomain FirstDS
+        xADDomain Domain
         {
-            DomainName = $DomainName
-            DomainAdministratorCredential = $DomainCreds
-            SafemodeAdministratorPassword = $DomainCreds
-            DatabasePath = "C:\NTDS"
-            LogPath = "C:\NTDS"
-            SysvolPath = "C:\SYSVOL"
-            DependsOn = @("[WindowsFeature]ADDSInstall")
+            DomainName = $Node.domainName
+            DomainAdministratorCredential = $domainCredential
+            SafemodeAdministratorPassword = $domainCredential
+            DatabasePath = 'F:\NTDS'
+            LogPath = 'F:\NTDS'
+            SysvolPath = 'F:\SYSVOL'
+            DependsOn = '[WindowsFeature]ADDSInstall'
         }
-
-        xPendingReboot RebootAfterPromotion{
-            Name = "RebootAfterPromotion"
-            DependsOn = "[xADDomain]FirstDS"
-        }
-
    }
 }

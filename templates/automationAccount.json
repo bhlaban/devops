@@ -25,18 +25,19 @@
         "compileName": "[guid(resourceGroup().id, deployment().name)]",
         "dscConfigurations": {
             "DomainControllerConfig": {
-                "name": "DomainControllerConfig",
+                "name": "dsc/DomainControllerConfig",
                 "description": "Minimum viable configuration for a domain controller role",
-                "script": "dsc/DomainControllerConfig.ps1"
+                "script": "dsc/DomainControllerConfig.ps1",
+                "compilationJobName": "dsc/DomainControllerConfig/InitialCompilation"
             }
         },
         "dscResources": {
             "xActiveDirectory": {
-                "name": "xActiveDirectory",
+                "name": "modules/xActiveDirectory",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.2.16.0.nupkg"
             },
             "xStorage": {
-                "name": "xStorage",
+                "name": "modules/xStorage",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xstorage.3.2.0.nupkg"
             }
         }
@@ -82,7 +83,21 @@
                     }
                 },
                 {
-                    "name": "domainCredential",
+                    "name": "[variables('dscResources').xStorage.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('dscResources').xStorage.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "credentials/domainCredential",
                     "type": "credentials",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
@@ -115,7 +130,7 @@
                     }
                 },
                 {
-                    "name": "[variables('compileName')]",
+                    "name": "[variables('dscConfigurations').DomainControllerConfig.compilationJobName]",
                     "type": "compilationjobs",
                     "apiVersion": "2015-10-31",
                     "tags": {},
