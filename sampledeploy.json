@@ -62,6 +62,12 @@
       },
       "defaultValue": "contoso.local"
     },
+    "compileDateTime": {
+      "type": "string",
+      "metadata": {
+        "description": "A date/time string used to make DSC config compilation names unique (i.e. '06-20-2018 10:45:00 AM')"
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -75,13 +81,6 @@
         "description": "SAS token to access artifacts location, if required"
       },
       "defaultValue": ""
-    },
-    "compileName": {
-      "type": "string",
-      "metadata": {
-        "description": "Unique value to identify compilation job"
-      },
-      "defaultValue": "[guid(resourceGroup().id, deployment().id)]"
     }
   },
   "variables": {
@@ -142,8 +141,8 @@
           "location": {
             "value": "[parameters('location')]"
           },
-          "compileName": {
-            "value": "[parameters('compileName')]"
+          "compileDateTime": {
+            "value": "[parameters('compileDateTime')]"
           }
         }
       }
