@@ -22,7 +22,7 @@
         }
     },
     "variables": {
-        "compileName": "[uniqueString(resourceGroup().id, deployment().name)]",
+        "compileName": "[guid(resourceGroup().id, deployment().name)]",
         "dscConfigurations": {
             "DomainControllerConfig": {
                 "name": "DomainControllerConfig",
