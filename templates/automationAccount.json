@@ -137,19 +137,21 @@
                     "name": "[variables('compileName')]",
                     "type": "compilationjobs",
                     "apiVersion": "2015-10-31",
+                    "tags": {},
                     "dependsOn": [
-                      "[parameters('AutomationAccountName')]",
-                      "[variables('dscConfigurations').DomainControllerConfig.name]"
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').DomainControllerConfig.name]"
                     ],
                     "properties": {
-                      "configuration": {
-                        "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
-                      },
-                      "parameters": {
-                        "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
-                      }
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
+                        }
                     }
-                  }            ]
+                }
+            ]
         }
     ],
     "outputs": {}
