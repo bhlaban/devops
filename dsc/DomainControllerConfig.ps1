@@ -24,7 +24,7 @@ configuration DomainControllerConfig
         }
         xADDomain Domain
         {
-            DomainName = $Node.domainName
+            DomainName = $Node.DomainName
             DomainAdministratorCredential = $domainCredential
             SafemodeAdministratorPassword = $domainCredential
             DatabasePath = 'F:\NTDS'
