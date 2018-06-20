@@ -40,10 +40,10 @@
     }
   },
   "variables": {
-    "managementNetworkSecurityGroupName": "[concat(parameters('managementSubnetName'), '-nsg')]",
-    "directoryNetworkSecurityGroupName": "[concat(parameters('directorySubnetName'), '-nsg')]",
-    "applicationNetworkSecurityGroupName": "[concat(parameters('applicationSubnetName'), '-nsg')]",
-    "dataNetworkSecurityGroupName": "[concat(parameters('dataSubnetName'), '-nsg')]"
+    "managementNetworkSecurityGroupName": "[concat(parameters('vnetName'), '-', parameters('managementSubnetName'), '-nsg')]",
+    "directoryNetworkSecurityGroupName": "[concat(parameters('vnetName'), '-', parameters('directorySubnetName'), '-nsg')]",
+    "applicationNetworkSecurityGroupName": "[concat(parameters('vnetName'), '-', parameters('applicationSubnetName'), '-nsg')]",
+    "dataNetworkSecurityGroupName": "[concat(parameters('vnetName'), '-', parameters('dataSubnetName'), '-nsg')]"
   },
   "resources": [
     {
