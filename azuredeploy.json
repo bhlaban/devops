@@ -56,6 +56,7 @@
     "dcVmName": "dc01",
     "dcVmSize": "Standard_D4_v3",
     "dcConfigName": "DomainControllerConfig",
+    "dcNodeConfigName": "DomainControllerConfig.localhost",
     "sqlIpAddress": "10.0.3.10",
     "sqlVmName": "sql01",
     "sqlVmSize": "Standard_D4_v3",
@@ -187,8 +188,8 @@
           "automationAccountName": {
             "value": "[variables('automationAccountName')]"
           },
-          "nodeConfigurationName": {
-            "value": "[variables('dcConfigName')]"
+          "nodeConfigName": {
+            "value": "[variables('dcNodeConfigName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"

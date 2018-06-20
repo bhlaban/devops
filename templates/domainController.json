@@ -51,7 +51,7 @@
         "description": "The name of the automation account"
       }
     },
-    "nodeConfigurationName": {
+    "nodeConfigName": {
       "type": "string",
       "metadata": {
         "description": "The name of the DSC Node Configuration in Azure Automation DSC to apply"
@@ -137,7 +137,6 @@
           "dataDisks": [
             {
               "name": "[concat(parameters('vmName'), '-disk-data')]",
-              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 1024,
               "lun": 0
@@ -188,7 +187,7 @@
             },
             {
               "Name": "NodeConfigurationName",
-              "Value": "[parameters('nodeConfigurationName')]",
+              "Value": "[parameters('nodeConfigName')]",
               "TypeName": "System.String"
             },
             {
