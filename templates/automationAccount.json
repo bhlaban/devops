@@ -134,7 +134,7 @@
                     }
                 },
                 {
-                    "name": "[variables('compileName')]",
+                    "name": "[variables('dscConfigurations').DomainControllerConfig.compilationJobName]",
                     "type": "compilationjobs",
                     "apiVersion": "2015-10-31",
                     "tags": {},
