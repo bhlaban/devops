@@ -25,23 +25,23 @@
         "compileName": "[guid(resourceGroup().id, deployment().name)]",
         "dscConfigurations": {
             "DomainControllerConfig": {
-                "name": "dsc/DomainControllerConfig",
+                "name": "DomainControllerConfig",
                 "description": "Minimum viable configuration for a domain controller role",
                 "script": "dsc/DomainControllerConfig.ps1",
-                "compilationJobName": "dsc/DomainControllerConfig/InitialCompilation"
+                "compilationJobName": "InitialCompilation"
             }
         },
         "dscResources": {
             "xActiveDirectory": {
-                "name": "modules/xActiveDirectory",
+                "name": "xActiveDirectory",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.2.16.0.nupkg"
             },
             "xNetworking": {
-                "name": "modules/xNetworking",
+                "name": "xNetworking",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xnetworking.5.7.0.nupkg"
             },
             "xStorage": {
-                "name": "modules/xStorage",
+                "name": "xStorage",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xstorage.3.2.0.nupkg"
             }
         }
@@ -101,7 +101,7 @@
                     }
                 },
                 {
-                    "name": "credentials/domainCredential",
+                    "name": "domainCredential",
                     "type": "credentials",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
