@@ -22,7 +22,7 @@
         }
     },
     "variables": {
-        "compileName": "[guid(resourceGroup().id, deployment().name)]",
+        "compileName": "[uniqueString(resourceGroup().id, deployment().name)]",
         "dscConfigurations": {
             "DomainControllerConfig": {
                 "name": "DomainControllerConfig",
@@ -120,6 +120,7 @@
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').xActiveDirectory.name]",
+                        "[variables('dscResources').xNetworking.name]",
                         "[variables('dscResources').xStorage.name]",
                         "domainCredential"
                     ],
