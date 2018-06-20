@@ -188,7 +188,7 @@
             "value": "[variables('automationAccountName')]"
           },
           "nodeConfigurationName": {
-            "value": "[variables('dcConfigurationNodeName')]"
+            "value": "[variables('dcConfigName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
