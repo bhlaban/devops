@@ -26,8 +26,7 @@
       "type": "string",
       "metadata": {
         "description": "A date/time string used to make DSC config compilation names unique (i.e. '06-20-2018 10:45:00 AM')"
-      },
-      "defaultValue": "superuser"
+      }
     },
     "_artifactsLocation": {
       "type": "string",
