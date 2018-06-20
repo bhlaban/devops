@@ -81,7 +81,7 @@
       "metadata": {
         "description": "Unique value to identify compilation job"
       },
-      "defaultValue": "[guid(resourceGroup().id, deployment().name)]"
+      "defaultValue": "[guid(resourceGroup().id, deployment().id)]"
     }
   },
   "variables": {
