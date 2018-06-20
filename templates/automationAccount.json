@@ -22,7 +22,7 @@
         }
     },
     "variables": {
-        "compileName": "[guid(resourceGroup().id, deployment().id)]",
+        "compileName": "[guid('FuckThisShit')]",
         "dscConfigurations": {
             "DomainControllerConfig": {
                 "name": "DomainControllerConfig",
