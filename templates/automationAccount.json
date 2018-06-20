@@ -14,6 +14,12 @@
         "adminPassword": {
             "type": "securestring"
         },
+        "dcConfigName": {
+            "type": "string"
+        },
+        "compileDateTime": {
+            "type": "string"
+        },
         "_artifactsLocation": {
             "type": "string"
         },
@@ -22,12 +28,12 @@
         }
     },
     "variables": {
-        "compileName": "[guid('FuckThisShit')]",
         "dscConfigurations": {
             "DomainControllerConfig": {
-                "name": "DomainControllerConfig",
+                "name": "[parameters('dcConfigName')]",
                 "description": "Minimum viable configuration for a domain controller role",
-                "script": "dsc/DomainControllerConfig.ps1"
+                "script": "dsc/DomainControllerConfig.ps1",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime')]"
             }
         },
         "dscResources": {
@@ -115,7 +121,7 @@
                     }
                 },
                 {
-                    "name": "[variables('compileName')]",
+                    "name": "[variables('dscConfigurations').DomainControllerConfig.compileName]",
                     "type": "compilationjobs",
                     "apiVersion": "2015-10-31",
                     "tags": {},

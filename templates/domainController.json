@@ -45,16 +45,16 @@
         "description": "The name of the subnet to connect to"
       }
     },
-    "registrationKey": {
+    "automationAccountName": {
       "type": "string",
       "metadata": {
-        "description": "The registration key for Azure Automation DSC"
+        "description": "The name of the automation account"
       }
     },
-    "registrationUrl": {
+    "nodeConfigurationName": {
       "type": "string",
       "metadata": {
-        "description": "The registration URL for Azure Automation DSC"
+        "description": "The name of the DSC Node Configuration in Azure Automation DSC to apply"
       }
     },
     "_artifactsLocation": {
@@ -74,6 +74,17 @@
     "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]"
   },
   "resources": [
+    {
+      "name": "[parameters('automationAccountName')]",
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiversion": "2015-10-31",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "name": "OMS"
+        }
+      }
+    },
     {
       "name": "[variables('networkInterfaceName')]",
       "type": "Microsoft.Network/networkInterfaces",
@@ -143,41 +154,60 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/Microsoft.Powershell.DSC')]",
+      "name": "[concat(parameters('vmName'),'/OnboardToDSC')]",
       "apiVersion": "2017-12-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', parameters('VMName'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
       ],
       "properties": {
-          "publisher": "Microsoft.Powershell",
-          "type": "DSC",
-          "typeHandlerVersion": "2.76",
-          "autoUpgradeMinorVersion": true,
-          "settings": {
-              "protectedSettings": {
-                  "Items": {
-                      "registrationKeyPrivate": "[parameters('registrationKey')]"
-                  }
-              },
-              "publicSettings": {
-                  "configurationArguments": [{
-                          "Name": "RegistrationKey",
-                          "Value": {
-                              "UserName": "PLACEHOLDER_DONOTUSE",
-                              "Password": "PrivateSettingsRef:registrationKeyPrivate"
-                          }
-                      },
-                      {
-                          "RegistrationUrl": "[parameters('registrationUrl')]"
-                      },
-                      {
-                          "NodeConfigurationName": "DomainControllerConfig.localhost"
-                      }
-                  ]
-              }
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.75",
+        "autoUpgradeMinorVersion": true,
+        "protectedSettings": {
+          "Items": {
+            "registrationKeyPrivate": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2015-10-31').Keys[0].value]"
           }
+        },
+        "settings": {
+          "Properties": [
+            {
+              "Name": "RegistrationKey",
+              "Value": {
+                "UserName": "PLACEHOLDER_DONOTUSE",
+                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+              },
+              "TypeName": "System.Management.Automation.PSCredential"
+            },
+            {
+              "Name": "RegistrationUrl",
+              "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))).registrationUrl]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "NodeConfigurationName",
+              "Value": "[parameters('nodeConfigurationName')]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "ConfigurationMode",
+              "Value": "ApplyandAutoCorrect",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "RebootNodeIfNeeded",
+              "Value": true,
+              "TypeName": "System.Boolean"
+            },
+            {
+              "Name": "ActionAfterReboot",
+              "Value": "ContinueConfiguration",
+              "TypeName": "System.String"
+            }
+          ]
+        }
       }
-  }
+    }
   ]
 }

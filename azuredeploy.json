@@ -22,6 +22,13 @@
         "description": "The password for the Administrator account"
       }
     },
+    "compileDateTime": {
+      "type": "string",
+      "metadata": {
+        "description": "A date/time string used to make DSC config compilation names unique (i.e. '06-20-2018 10:45:00 AM')"
+      },
+      "defaultValue": "superuser"
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -38,7 +45,7 @@
     }
   },
   "variables": {
-    "automationAccountName": "[concat('automation-',take(guid(resourceGroup().id),5))]",
+    "automationAccountName": "automation",
     "vnetName": "vnet",
     "managementSubnetName": "management-subnet",
     "directorySubnetName": "directory-subnet",
@@ -49,6 +56,7 @@
     "dcIpAddress": "10.0.1.10",
     "dcVmName": "dc01",
     "dcVmSize": "Standard_D4_v3",
+    "dcConfigName": "DomainControllerConfig",
     "sqlIpAddress": "10.0.3.10",
     "sqlVmName": "sql01",
     "sqlVmSize": "Standard_D4_v3",
@@ -58,8 +66,6 @@
     "tfsIpAddress": "10.0.2.20",
     "tfsVmName": "tfs01",
     "tfsVmSize": "Standard_D4_v3",
-    "registrationKey": "elapR/1I9JSlxiOJo79LzrpGTBWgMNfoTHB0SCz/MVtN9pLsh72qiSd+vSBOc5eEZ3aQv0T5z3OmjvHVM6HBHg==",
-    "registrationUrl": "https://usge-agentservice-prod-1.azure-automation.us/accounts/e1b09859-6e57-4d55-a934-141c504b144d",
     "templates": {
       "automationAccountTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/automationAccount.json', parameters('_artifactsLocationSasToken')))]",
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
@@ -93,6 +99,12 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "dcConfigName": {
+            "value": "[variables('dcConfigName')]"
+          },
+          "compileDateTime": {
+            "value": "[parameters('compileDateTime')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
@@ -173,11 +185,11 @@
           "existingSubnetName": {
             "value": "[variables('directorySubnetName')]"
           },
-          "registrationKey": {
-            "value": "[variables('registrationKey')]"
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
           },
-          "registrationUrl": {
-            "value": "[variables('registrationUrl')]"
+          "nodeConfigurationName": {
+            "value": "[variables('dcConfigurationNodeName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
