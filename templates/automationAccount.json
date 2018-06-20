@@ -36,6 +36,10 @@
                 "name": "modules/xActiveDirectory",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.2.16.0.nupkg"
             },
+            "xNetworking": {
+                "name": "modules/xNetworking",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xnetworking.5.7.0.nupkg"
+            },
             "xStorage": {
                 "name": "modules/xStorage",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xstorage.3.2.0.nupkg"
@@ -69,7 +73,7 @@
                     }
                 },
                 {
-                    "name": "[variables('dscResources').xStorage.name]",
+                    "name": "[variables('dscResources').xNetworking.name]",
                     "type": "modules",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
@@ -78,7 +82,7 @@
                     ],
                     "properties": {
                         "contentLink": {
-                            "uri": "[variables('dscResources').xStorage.url]"
+                            "uri": "[variables('dscResources').xNetworking.url]"
                         }
                     }
                 },
