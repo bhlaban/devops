@@ -38,7 +38,7 @@
     }
   },
   "variables": {
-    "automationAccountName": "automation",
+    "automationAccountName": "[concat('automation-',take(guid(resourceGroup().id),5))]",
     "vnetName": "vnet",
     "managementSubnetName": "management-subnet",
     "directorySubnetName": "directory-subnet",
