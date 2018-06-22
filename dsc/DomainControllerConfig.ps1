@@ -6,25 +6,6 @@ configuration DomainControllerConfig
 
     Node $AllNodes.NodeName
     {
-        WindowsFeature DNS
-        {
-            Ensure = "Present"
-            Name = "DNS"
-        }
-
-        WindowsFeature DnsTools
-        {
-            Ensure = "Present"
-            Name = "RSAT-DNS-Server"
-            DependsOn = "[WindowsFeature]DNS"
-        }
-
-        WindowsFeature ADDSInstall
-        {
-            Ensure = 'Present'
-            Name = 'AD-Domain-Services'
-        }
-        
         xWaitforDisk Disk2
         {
              DiskId = 2
@@ -36,6 +17,47 @@ configuration DomainControllerConfig
         {
              DiskId = 2
              DriveLetter = 'F'
+        }
+
+        WindowsFeature DNS
+        {
+            Ensure = "Present"
+            Name = "DNS"
+        }
+
+        WindowsFeature DNS-Tools
+        {
+            Ensure = "Present"
+            Name = "RSAT-DNS-Server"
+            DependsOn = "[WindowsFeature]DNS"
+        }
+
+        xDnsServerAddress DnsServerAddress
+        {
+            Address = $Node.DnsIpAddress
+            InterfaceAlias = $Node.NicAlias
+            AddressFamily = 'IPv4'
+            DependsOn = "[WindowsFeature]DNS"
+        }
+
+        WindowsFeature ADDS
+        {
+            Ensure = 'Present'
+            Name = 'AD-Domain-Services'
+        }
+        
+        WindowsFeature ADDS-Tools
+        {
+            Ensure = "Present"
+            Name = "RSAT-ADDS-Tools"
+            DependsOn = "[WindowsFeature]ADDS"
+        }
+
+        WindowsFeature AD-AdminCenter
+        {
+            Ensure = "Present"
+            Name = "RSAT-AD-AdminCenter"
+            DependsOn = "[WindowsFeature]ADDS-Tools"
         }
         
         xADDomain Domain

@@ -105,6 +105,9 @@
           "dcConfigName": {
             "value": "[variables('dcConfigName')]"
           },
+          "dcIpAddress": {
+            "value": "[variables('dcIpAddress')]"
+          },
           "jumpBoxConfigName": {
             "value": "[variables('jumpBoxConfigName')]"
           },

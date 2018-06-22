@@ -17,6 +17,9 @@
         "dcConfigName": {
             "type": "string"
         },
+        "dnsIpAddress": {
+            "type": "string"
+        },
         "jumpBoxConfigName": {
             "type": "string"
         },
@@ -36,7 +39,9 @@
                 "name": "[parameters('dcConfigName')]",
                 "description": "Minimum viable configuration for a domain controller role",
                 "script": "dsc/DomainControllerConfig.ps1",
-                "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]"
+                "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]",
+                "dnsIpAddress": "[parameters('dnsIpAddress')]",
+                "nicAlias": "Ethernet 3"
             },
             "JumpBoxConfig": {
                 "name": "[parameters('jumpBoxConfigName')]",
@@ -180,11 +185,10 @@
                             "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
+                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\",\"DnsIpAddress\":\"', variables('dscConfigurations').DomainControllerConfig.dnsIpAddress, '\",\"NicAlias\":\"', variables('dscConfigurations').DomainControllerConfig.nicAlias, '\"}}')]"
                         }
                     }
                 }
-
                 ,
                 {
                     "name": "[variables('dscConfigurations').JumpBoxConfig.name]",
@@ -219,7 +223,7 @@
                             "name": "[variables('dscConfigurations').JumpBoxConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
+                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}}')]"
                         }
                     }
                 }
