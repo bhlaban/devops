@@ -170,7 +170,7 @@
                             "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\",\"DnsIpAddress\":\"', variables('dscConfigurations').DomainControllerConfig.dnsIpAddress, '\",\"NicAlias\":\"', variables('dscConfigurations').DomainControllerConfig.nicAlias, '\"}}')]"
+                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}}')]"
                         }
                     }
                 },
