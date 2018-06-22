@@ -59,9 +59,10 @@
     "dcVmSize": "Standard_D4_v3",
     "dcConfigName": "DomainControllerConfig",
     "dcNodeConfigName": "DomainControllerConfig.localhost",
-    "sqlIpAddress": "10.0.3.10",
-    "sqlVmName": "sql01",
-    "sqlVmSize": "Standard_D4_v3",
+    "sqlServerIpAddress": "10.0.3.10",
+    "sqlServerVmName": "sql01",
+    "sqlServerVmSize": "Standard_D4_v3",
+    "sqlServerConfigName": "SqlServerConfig",
     "jamaIpAddress": "10.0.2.10",
     "jamaVmName": "jama01",
     "jamaVmSize": "Standard_D4_v3",
@@ -105,11 +106,11 @@
           "dcConfigName": {
             "value": "[variables('dcConfigName')]"
           },
-          "dcIpAddress": {
-            "value": "[variables('dcIpAddress')]"
-          },
           "jumpBoxConfigName": {
             "value": "[variables('jumpBoxConfigName')]"
+          },
+          "sqlServerConfigName": {
+            "value": "[variables('sqlServerConfigName')]"
           },
           "compileDateTime": {
             "value": "[parameters('compileDateTime')]"
@@ -275,10 +276,10 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[variables('sqlVmName')]"
+            "value": "[variables('sqlServerVmName')]"
           },
           "vmSize": {
-            "value": "[variables('sqlVmSize')]"
+            "value": "[variables('sqlServerVmSize')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -287,7 +288,7 @@
             "value": "[parameters('adminPassword')]"
           },
           "ipAddress": {
-            "value": "[variables('sqlIpAddress')]"
+            "value": "[variables('sqlServerIpAddress')]"
           },
           "existingVnetName": {
             "value": "[variables('vnetName')]"

@@ -20,6 +20,9 @@
         "jumpBoxConfigName": {
             "type": "string"
         },
+        "sqlServerConfigName": {
+            "type": "string"
+        },
         "compileDateTime": {
             "type": "string"
         },
