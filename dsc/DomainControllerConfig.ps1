@@ -25,33 +25,21 @@ configuration DomainControllerConfig
             Name = "DNS"
         }
 
-        WindowsFeature DNS-Tools
-        {
-            Ensure = "Present"
-            Name = "RSAT-DNS-Server"
-            DependsOn = "[WindowsFeature]DNS"
-        }
-
         WindowsFeature ADDS
         {
             Ensure = 'Present'
             Name = 'AD-Domain-Services'
+            IncludeAllSubFeature = $true
         }
         
-        WindowsFeature ADDS-Tools
+        WindowsFeature RSAT-Tools
         {
             Ensure = "Present"
-            Name = "RSAT-ADDS-Tools"
+            Name = "RSAT"
+            IncludeAllSubFeature = $true
             DependsOn = "[WindowsFeature]ADDS"
         }
 
-        WindowsFeature AD-AdminCenter
-        {
-            Ensure = "Present"
-            Name = "RSAT-AD-AdminCenter"
-            DependsOn = "[WindowsFeature]ADDS-Tools"
-        }
-        
         xADDomain Domain
         {
             DomainName = $Node.DomainName
