@@ -63,10 +63,6 @@
                 "name": "xActiveDirectory",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.2.16.0.nupkg"
             },
-            "xNetworking": {
-                "name": "xNetworking",
-                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xnetworking.5.7.0.nupkg"
-            },
             "xStorage": {
                 "name": "xStorage",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xstorage.3.2.0.nupkg"
@@ -114,20 +110,6 @@
                     }
                 },
                 {
-                    "name": "[variables('dscResources').xNetworking.name]",
-                    "type": "modules",
-                    "apiVersion": "2015-10-31",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('dscResources').xNetworking.url]"
-                        }
-                    }
-                },
-                {
                     "name": "[variables('dscResources').xStorage.name]",
                     "type": "modules",
                     "apiVersion": "2015-10-31",
@@ -162,7 +144,6 @@
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').xActiveDirectory.name]",
-                        "[variables('dscResources').xNetworking.name]",
                         "[variables('dscResources').xStorage.name]",
                         "domainCredential"
                     ],
@@ -234,7 +215,9 @@
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]"
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "domainCredential"
                     ],
                     "properties": {
                         "state": "Published",

@@ -2,7 +2,7 @@ configuration DomainControllerConfig
 {
     $domainCredential = Get-AutomationPSCredential domainCredential
 
-    Import-DscResource -ModuleName @{ModuleName='xActiveDirectory';ModuleVersion='2.16.0.0'},@{ModuleName='xNetworking';ModuleVersion='5.7.0.0'},@{ModuleName='xStorage';ModuleVersion='3.2.0.0'},'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName @{ModuleName='xActiveDirectory';ModuleVersion='2.16.0.0'},@{ModuleName='xStorage';ModuleVersion='3.2.0.0'},'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {
@@ -29,14 +29,6 @@ configuration DomainControllerConfig
         {
             Ensure = "Present"
             Name = "RSAT-DNS-Server"
-            DependsOn = "[WindowsFeature]DNS"
-        }
-
-        xDnsServerAddress DnsServerAddress
-        {
-            Address = $Node.DnsIpAddress
-            InterfaceAlias = $Node.NicAlias
-            AddressFamily = 'IPv4'
             DependsOn = "[WindowsFeature]DNS"
         }
 
