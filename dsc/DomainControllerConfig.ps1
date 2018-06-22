@@ -1,8 +1,7 @@
 configuration DomainControllerConfig
 {
     $domainCredential = Get-AutomationPSCredential domainCredential
-    $Interface = Get-NetAdapter | Where-Object Name -Like "Ethernet*" | Select-Object -First 1
-    $InterfaceAlias = $($Interface.Name)
+    $firstNetAdapter = Get-NetAdapter | Where-Object Name -Like "Ethernet*" | Select-Object -First 1
 
     Import-DscResource -ModuleName @{ModuleName='xActiveDirectory';ModuleVersion='2.16.0.0'},@{ModuleName='xNetworking';ModuleVersion='5.7.0.0'},@{ModuleName='xStorage';ModuleVersion='3.2.0.0'},'PSDesiredStateConfiguration'
 
@@ -24,7 +23,7 @@ configuration DomainControllerConfig
         xDnsServerAddress DnsServerAddress
         {
             Address        = '127.0.0.1'
-            InterfaceAlias = $InterfaceAlias
+            InterfaceAlias = $firstNetAdapter.InterfaceAlias
             AddressFamily  = 'IPv4'
             DependsOn = "[WindowsFeature]DNS"
         }
