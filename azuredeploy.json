@@ -52,6 +52,8 @@
     "dataSubnetName": "data-subnet",
     "jumpBoxVmName": "jumpbox01",
     "jumpBoxVmSize": "Standard_D4_v3",
+    "jumpBoxConfigName": "JumpBoxConfig",
+    "jumpBoxNodeConfigName": "JumpBoxConfig.localhost",
     "dcIpAddress": "10.0.1.10",
     "dcVmName": "dc01",
     "dcVmSize": "Standard_D4_v3",
@@ -102,6 +104,9 @@
           },
           "dcConfigName": {
             "value": "[variables('dcConfigName')]"
+          },
+          "jumpBoxConfigName": {
+            "value": "[variables('jumpBoxConfigName')]"
           },
           "compileDateTime": {
             "value": "[parameters('compileDateTime')]"
@@ -232,6 +237,12 @@
           },
           "existingSubnetName": {
             "value": "[variables('managementSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('jumpBoxNodeConfigName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"

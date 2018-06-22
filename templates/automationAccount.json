@@ -17,6 +17,9 @@
         "dcConfigName": {
             "type": "string"
         },
+        "jumpBoxConfigName": {
+            "type": "string"
+        },
         "compileDateTime": {
             "type": "string"
         },
@@ -34,9 +37,19 @@
                 "description": "Minimum viable configuration for a domain controller role",
                 "script": "dsc/DomainControllerConfig.ps1",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]"
+            },
+            "JumpBoxConfig": {
+                "name": "[parameters('jumpBoxConfigName')]",
+                "description": "Minimum viable configuration for a jumpbox role",
+                "script": "dsc/JumpBoxConfig.ps1",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('jumpBoxConfigName'), parameters('compileDateTime'))]"
             }
         },
         "dscResources": {
+            "ComputerManagementDsc": {
+                "name": "ComputerManagementDsc",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/computermanagementdsc.5.1.0.nupkg"
+            },
             "xActiveDirectory": {
                 "name": "xActiveDirectory",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.2.16.0.nupkg"
@@ -59,6 +72,20 @@
                 }
             },
             "resources": [
+                {
+                    "name": "[variables('dscResources').ComputerManagementDsc.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('dscResources').ComputerManagementDsc.url]"
+                        }
+                    }
+                },
                 {
                     "name": "[variables('dscResources').xActiveDirectory.name]",
                     "type": "modules",
@@ -132,6 +159,45 @@
                     "properties": {
                         "configuration": {
                             "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
+                        }
+                    }
+                }
+
+                ,
+                {
+                    "name": "[variables('dscConfigurations').JumpBoxConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "domainCredential"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').JumpBoxConfig.script, parameters('_artifactsLocationSasToken'))]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').JumpBoxConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').JumpBoxConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').JumpBoxConfig.name]"
                         },
                         "parameters": {
                             "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
