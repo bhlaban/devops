@@ -60,7 +60,7 @@ configuration DomainControllerConfig
             DatabasePath = 'F:\NTDS'
             LogPath = 'F:\NTDS'
             SysvolPath = 'F:\SYSVOL'
-            DependsOn = '[WindowsFeature]ADDSInstall'
+            DependsOn = '[WindowsFeature]ADDS'
         }
    }
 }
