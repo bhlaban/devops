@@ -17,9 +17,6 @@
         "dcConfigName": {
             "type": "string"
         },
-        "dnsIpAddress": {
-            "type": "string"
-        },
         "jumpBoxConfigName": {
             "type": "string"
         },
@@ -39,15 +36,19 @@
                 "name": "[parameters('dcConfigName')]",
                 "description": "Minimum viable configuration for a domain controller role",
                 "script": "dsc/DomainControllerConfig.ps1",
-                "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]",
-                "dnsIpAddress": "[parameters('dnsIpAddress')]",
-                "nicAlias": "Ethernet 3"
+                "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]"
             },
             "JumpBoxConfig": {
                 "name": "[parameters('jumpBoxConfigName')]",
                 "description": "Minimum viable configuration for a jumpbox role",
                 "script": "dsc/JumpBoxConfig.ps1",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('jumpBoxConfigName'), parameters('compileDateTime'))]"
+            },
+            "SqlServerConfig": {
+                "name": "[parameters('sqlServerConfigName')]",
+                "description": "Minimum viable configuration for a sql server role",
+                "script": "dsc/SqlServerConfig.ps1",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('sqlServerConfigName'), parameters('compileDateTime'))]"
             }
         },
         "dscResources": {
@@ -188,17 +189,14 @@
                             "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\",\"DnsIpAddress\":\"', variables('dscConfigurations').DomainControllerConfig.dnsIpAddress, '\",\"NicAlias\":\"', variables('dscConfigurations').DomainControllerConfig.nicAlias, '\"}}')]"
                         }
                     }
-                }
-                ,
+                },
                 {
                     "name": "[variables('dscConfigurations').JumpBoxConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscResources').ComputerManagementDsc.name]",
-                        "domainCredential"
+                        "[parameters('AutomationAccountName')]"
                     ],
                     "properties": {
                         "state": "Published",
@@ -221,6 +219,41 @@
                     "properties": {
                         "configuration": {
                             "name": "[variables('dscConfigurations').JumpBoxConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\"}}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').SqlServerConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').SqlServerConfig.script, parameters('_artifactsLocationSasToken'))]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').SqlServerConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').SqlServerConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').SqlServerConfig.name]"
                         },
                         "parameters": {
                             "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}}')]"

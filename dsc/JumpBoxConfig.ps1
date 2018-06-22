@@ -1,16 +1,13 @@
 configuration JumpBoxConfig
 {
-    $domainCredential = Get-AutomationPSCredential domainCredential
-
-    Import-DscResource -ModuleName @{ModuleName='ComputerManagementDsc';ModuleVersion='5.1.0.0'},'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {
-        Computer JoinDomain
-        {
-            Name = $Node.NodeName
-            DomainName = $Node.DomainName
-            Credential = $domainCredential
+        File FileDemo {
+            DestinationPath = 'C:\DevOps\readme.txt'
+            Ensure = "Present"
+            Contents = 'This file was created by Azure Automation DSC'
         }
     }
 }

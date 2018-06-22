@@ -151,7 +151,10 @@
             "value": "[variables('dataSubnetName')]"
           },
           "dnsServers": {
-            "value": []
+            "value": [
+              "[variables('dcIpAddress')]",
+              "8.8.8.8"
+            ]
           }
         }
       }
