@@ -133,7 +133,7 @@
                     }
                 },
                 {
-                    "name": "domainCredential",
+                    "name": "DomainCredential",
                     "type": "credentials",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
