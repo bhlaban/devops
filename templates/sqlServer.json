@@ -75,6 +75,17 @@
   },
   "resources": [
     {
+      "name": "[parameters('automationAccountName')]",
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiversion": "2015-10-31",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "name": "OMS"
+        }
+      }
+    },
+    {
       "name": "[variables('networkInterfaceName')]",
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2017-09-01",
@@ -101,6 +112,7 @@
       "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "dependsOn": [
+        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
       ],
       "properties": {
