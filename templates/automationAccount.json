@@ -59,7 +59,7 @@
             "TfsConfig": {
                 "name": "[parameters('tfsConfigName')]",
                 "description": "Minimum viable configuration for a tfs role",
-                "script": "dsc/SqlServerConfig.ps1",
+                "script": "dsc/TfsConfig.ps1",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('tfsConfigName'), parameters('compileDateTime'))]"
             }
         },
