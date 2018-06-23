@@ -149,7 +149,7 @@
                         "[parameters('AutomationAccountName')]"
                     ],
                     "properties": {
-                        "userName": "[parameters('adminUsername')]",
+                        "userName": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
                         "password": "[parameters('adminPassword')]"
                     }
                 },
