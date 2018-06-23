@@ -115,8 +115,14 @@
           "sqlServerConfigName": {
             "value": "[variables('sqlServerConfigName')]"
           },
+          "sqlServerComputerName": {
+            "value": "[variables('sqlServerVmName')]"
+          },
           "tfsConfigName": {
             "value": "[variables('tfsConfigName')]"
+          },
+          "tfsComputerName": {
+            "value": "[variables('tfsVmName')]"
           },
           "compileDateTime": {
             "value": "[parameters('compileDateTime')]"

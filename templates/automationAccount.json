@@ -23,7 +23,13 @@
         "sqlServerConfigName": {
             "type": "string"
         },
+        "sqlServerComputerName": {
+            "type": "string"
+        },
         "tfsConfigName": {
+            "type": "string"
+        },
+        "tfsComputerName": {
             "type": "string"
         },
         "compileDateTime": {
@@ -54,13 +60,15 @@
                 "name": "[parameters('sqlServerConfigName')]",
                 "description": "Minimum viable configuration for a sql server role",
                 "script": "[concat('dsc/', parameters('sqlServerConfigName'), '.ps1')]",
-                "compileName": "[guid(parameters('automationAccountName'), parameters('sqlServerConfigName'), parameters('compileDateTime'))]"
+                "compileName": "[guid(parameters('automationAccountName'), parameters('sqlServerConfigName'), parameters('compileDateTime'))]",
+                "computerName": "[parameters('sqlServerComputerName')]"
             },
             "TfsConfig": {
                 "name": "[parameters('tfsConfigName')]",
                 "description": "Minimum viable configuration for a tfs role",
                 "script": "[concat('dsc/', parameters('tfsConfigName'), '.ps1')]",
-                "compileName": "[guid(parameters('automationAccountName'), parameters('tfsConfigName'), parameters('compileDateTime'))]"
+                "compileName": "[guid(parameters('automationAccountName'), parameters('tfsConfigName'), parameters('compileDateTime'))]",
+                "computerName": "[parameters('tfsComputerName')]"
             }
         },
         "dscResources": {
@@ -251,7 +259,7 @@
                             "name": "[variables('dscConfigurations').SqlServerConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}}')]"
+                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\",\"ComputerName\":\"', variables('dscConfigurations').SqlServerConfig.computerName, '\"}}')]"
                         }
                     }
                 },
@@ -288,7 +296,7 @@
                             "name": "[variables('dscConfigurations').TfsConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}}')]"
+                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\",\"ComputerName\":\"', variables('dscConfigurations').TfsConfig.computerName, '\"}}')]"
                         }
                     }
                 }
