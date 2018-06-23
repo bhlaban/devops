@@ -63,6 +63,7 @@
     "sqlServerVmName": "sql01",
     "sqlServerVmSize": "Standard_D4_v3",
     "sqlServerConfigName": "SqlServerConfig",
+    "sqlServerNodeConfigName": "SqlServerConfig.localhost",
     "jamaIpAddress": "10.0.2.10",
     "jamaVmName": "jama01",
     "jamaVmSize": "Standard_D4_v3",
@@ -295,6 +296,12 @@
           },
           "existingSubnetName": {
             "value": "[variables('dataSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('sqlServerNodeConfigName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
