@@ -23,6 +23,9 @@
         "sqlServerConfigName": {
             "type": "string"
         },
+        "tfsConfigName": {
+            "type": "string"
+        },
         "compileDateTime": {
             "type": "string"
         },
