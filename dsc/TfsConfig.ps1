@@ -1,6 +1,6 @@
 configuration TfsConfig
 {
-    $domainCredential = Get-AutomationPSCredential domainCredential
+    $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
 
     Import-DscResource -ModuleName @{ModuleName='ComputerManagementDsc';ModuleVersion='5.1.0.0'},'PSDesiredStateConfiguration'
 
