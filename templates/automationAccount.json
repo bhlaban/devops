@@ -41,25 +41,25 @@
             "DomainControllerConfig": {
                 "name": "[parameters('dcConfigName')]",
                 "description": "Minimum viable configuration for a domain controller role",
-                "script": "dsc/DomainControllerConfig.ps1",
+                "script": "[concat('dsc/', parameters('dcConfigName'))]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]"
             },
             "JumpBoxConfig": {
                 "name": "[parameters('jumpBoxConfigName')]",
                 "description": "Minimum viable configuration for a jumpbox role",
-                "script": "dsc/JumpBoxConfig.ps1",
+                "script": "[concat('dsc/', parameters('jumpBoxConfigName'))]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('jumpBoxConfigName'), parameters('compileDateTime'))]"
             },
             "SqlServerConfig": {
                 "name": "[parameters('sqlServerConfigName')]",
                 "description": "Minimum viable configuration for a sql server role",
-                "script": "dsc/SqlServerConfig.ps1",
+                "script": "[concat('dsc/', parameters('sqlServerConfigName'))]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('sqlServerConfigName'), parameters('compileDateTime'))]"
             },
             "TfsConfig": {
                 "name": "[parameters('tfsConfigName')]",
                 "description": "Minimum viable configuration for a tfs role",
-                "script": "dsc/TfsConfig.ps1",
+                "script": "[concat('dsc/', parameters('tfsConfigName'))]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('tfsConfigName'), parameters('compileDateTime'))]"
             }
         },
