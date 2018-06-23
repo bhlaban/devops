@@ -70,6 +70,8 @@
     "tfsIpAddress": "10.0.2.20",
     "tfsVmName": "tfs01",
     "tfsVmSize": "Standard_D4_v3",
+    "tfsConfigName": "TfsConfig",
+    "tfsNodeConfigName": "TfsConfig.localhost",
     "templates": {
       "automationAccountTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/automationAccount.json', parameters('_artifactsLocationSasToken')))]",
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
@@ -112,6 +114,9 @@
           },
           "sqlServerConfigName": {
             "value": "[variables('sqlServerConfigName')]"
+          },
+          "tfsConfigName": {
+            "value": "[variables('tfsConfigName')]"
           },
           "compileDateTime": {
             "value": "[parameters('compileDateTime')]"
@@ -392,6 +397,12 @@
           },
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('tfsNodeConfigName')]"
           },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"

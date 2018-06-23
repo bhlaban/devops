@@ -52,6 +52,12 @@
                 "description": "Minimum viable configuration for a sql server role",
                 "script": "dsc/SqlServerConfig.ps1",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('sqlServerConfigName'), parameters('compileDateTime'))]"
+            },
+            "TfsConfig": {
+                "name": "[parameters('tfsConfigName')]",
+                "description": "Minimum viable configuration for a tfs role",
+                "script": "dsc/SqlServerConfig.ps1",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('tfsConfigName'), parameters('compileDateTime'))]"
             }
         },
         "dscResources": {
@@ -240,6 +246,43 @@
                     "properties": {
                         "configuration": {
                             "name": "[variables('dscConfigurations').SqlServerConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').TfsConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "domainCredential"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').TfsConfig.script, parameters('_artifactsLocationSasToken'))]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').TfsConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').TfsConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').TfsConfig.name]"
                         },
                         "parameters": {
                             "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}}')]"
