@@ -76,6 +76,10 @@
                 "name": "ComputerManagementDsc",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/computermanagementdsc.5.1.0.nupkg"
             },
+            "SqlServerDsc": {
+                "name": "SqlServerDsc",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/sqlserverdsc.11.3.0.nupkg"
+            },
             "xActiveDirectory": {
                 "name": "xActiveDirectory",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.2.16.0.nupkg"
@@ -109,6 +113,20 @@
                     "properties": {
                         "contentLink": {
                             "uri": "[variables('dscResources').ComputerManagementDsc.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscResources').SqlServerDsc.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('dscResources').SqlServerDsc.url]"
                         }
                     }
                 },
@@ -234,6 +252,7 @@
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').ComputerManagementDsc.name]",
+                        "[variables('dscResources').SqlServerDsc.name]",
                         "domainCredential"
                     ],
                     "properties": {

@@ -173,7 +173,7 @@
           }
         },
         "protectedSettings": {
-          "SQLAuthUpdateUserName": "howie",
+          "SQLAuthUpdateUserName": "jama",
           "SQLAuthUpdatePassword": "[parameters('adminPassword')]"
         }
       }
