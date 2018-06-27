@@ -12,23 +12,5 @@ configuration SqlServerConfig
             DomainName = $Node.DomainName
             Credential = $domainCredential
         }
-
-        SqlServerLogin AddDomainAdminAccountToSqlServer
-        {
-            Name = $domainCredential.UserName
-            LoginType = "WindowsUser"
-			ServerName = $Node.NodeName
-			InstanceName = "MSSQLSERVER"
-        }
-
-		SqlServerRole AddDomainAdminAccountToSysAdmin
-        {
-			Ensure = "Present"
-            MembersToInclude = $domainCredential.UserName
-            ServerRoleName = "sysadmin"
-			ServerName = $Node.NodeName
-			InstanceName = "MSSQLSERVER"
-			DependsOn = "[SqlServerLogin]AddDomainAdminAccountToSqlServer"
-        }
     }
 }

@@ -202,7 +202,8 @@
       "apiVersion": "2015-01-01",
       "comments": "This creates the JumpBox VM",
       "dependsOn": [
-        "Microsoft.Resources/deployments/DomainController"
+        "Microsoft.Resources/deployments/AutomationAccount",
+        "Microsoft.Resources/deployments/Network"
       ],
       "properties": {
         "mode": "Incremental",
