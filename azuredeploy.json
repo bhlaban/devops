@@ -27,20 +27,6 @@
       "metadata": {
         "description": "A date/time string used to make DSC config compilation names unique (i.e. '06-20-2018 10:45:00 AM')"
       }
-    },
-    "_artifactsLocation": {
-      "type": "string",
-      "metadata": {
-        "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
-      },
-      "defaultValue": "https://raw.githubusercontent.com/bhlaban/devops/master/"
-    },
-    "_artifactsLocationSasToken": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
-      },
-      "defaultValue": ""
     }
   },
   "variables": {
@@ -72,14 +58,15 @@
     "tfsVmSize": "Standard_D4_v3",
     "tfsConfigName": "TfsConfig",
     "tfsNodeConfigName": "[concat(variables('tfsConfigName'), '.localhost')]",
+    "artifactsUri": "[deployment().properties.templateLink.uri]",
     "templates": {
-      "automationAccountTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/automationAccount.json', parameters('_artifactsLocationSasToken')))]",
-      "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
-      "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/domainController.json', parameters('_artifactsLocationSasToken')))]",
-      "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
-      "sqlServerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
-      "jamaTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jama.json', parameters('_artifactsLocationSasToken')))]",
-      "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/tfs.json', parameters('_artifactsLocationSasToken')))]"
+      "automationAccountTemplate": "[uri(variables('artifactsUri'), 'templates/automationAccount.json')]",
+      "networkTemplate": "[uri(variables('artifactsUri'), 'templates/virtualNetwork.json')]",
+      "domainControllerTemplate": "[uri(variables('artifactsUri'), 'templates/domainController.json')]",
+      "jumpBoxTemplate": "[uri(variables('artifactsUri'), 'templates/jumpBox.json')]",
+      "sqlServerTemplate": "[uri(variables('artifactsUri'), 'templates/sqlServer.json')]",
+      "jamaTemplate": "[uri(variables('artifactsUri'), 'templates/jama.json')]",
+      "tfsTemplate": "[uri(variables('artifactsUri'), 'templates/tfs.json')]"
     }
   },
   "resources": [
@@ -121,11 +108,8 @@
           "compileDateTime": {
             "value": "[parameters('compileDateTime')]"
           },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "artifactsUri": {
+            "value": "[variables('artifactsUri')]"
           }
         }
       }
@@ -209,11 +193,8 @@
           "nodeConfigName": {
             "value": "[variables('dcNodeConfigName')]"
           },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "artifactsUri": {
+            "value": "[variables('artifactsUri')]"
           }
         }
       }
@@ -257,11 +238,8 @@
           "nodeConfigName": {
             "value": "[variables('jumpBoxNodeConfigName')]"
           },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "artifactsUri": {
+            "value": "[parameters('artifactsUri')]"
           }
         }
       }
@@ -308,11 +286,8 @@
           "nodeConfigName": {
             "value": "[variables('sqlServerNodeConfigName')]"
           },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "artifactsUri": {
+            "value": "[parameters('artifactsUri')]"
           }
         }
       }
@@ -353,11 +328,8 @@
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
           },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "artifactsUri": {
+            "value": "[parameters('artifactsUri')]"
           }
         }
       }
@@ -404,11 +376,8 @@
           "nodeConfigName": {
             "value": "[variables('tfsNodeConfigName')]"
           },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+          "artifactsUri": {
+            "value": "[parameters('artifactsUri')]"
           }
         }
       }

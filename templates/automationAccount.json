@@ -29,10 +29,7 @@
         "compileDateTime": {
             "type": "string"
         },
-        "_artifactsLocation": {
-            "type": "string"
-        },
-        "_artifactsLocationSasToken": {
+        "artifactsUri": {
             "type": "string"
         }
     },
@@ -179,7 +176,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').DomainControllerConfig.script, parameters('_artifactsLocationSasToken'))]"
+                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').DomainControllerConfig.script)]"
                         }
                     }
                 },
@@ -214,7 +211,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').JumpBoxConfig.script, parameters('_artifactsLocationSasToken'))]"
+                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').JumpBoxConfig.script)]"
                         }
                     }
                 },
@@ -252,7 +249,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').SqlServerConfig.script, parameters('_artifactsLocationSasToken'))]"
+                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').SqlServerConfig.script)]"
                         }
                     }
                 },
@@ -289,7 +286,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').TfsConfig.script, parameters('_artifactsLocationSasToken'))]"
+                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').TfsConfig.script)]"
                         }
                     }
                 },
