@@ -192,9 +192,6 @@
           },
           "nodeConfigName": {
             "value": "[variables('dcNodeConfigName')]"
-          },
-          "artifactsUri": {
-            "value": "[variables('artifactsUri')]"
           }
         }
       }
@@ -237,9 +234,6 @@
           },
           "nodeConfigName": {
             "value": "[variables('jumpBoxNodeConfigName')]"
-          },
-          "artifactsUri": {
-            "value": "[parameters('artifactsUri')]"
           }
         }
       }
@@ -285,9 +279,6 @@
           },
           "nodeConfigName": {
             "value": "[variables('sqlServerNodeConfigName')]"
-          },
-          "artifactsUri": {
-            "value": "[parameters('artifactsUri')]"
           }
         }
       }
@@ -327,9 +318,6 @@
           },
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
-          },
-          "artifactsUri": {
-            "value": "[parameters('artifactsUri')]"
           }
         }
       }
@@ -375,9 +363,6 @@
           },
           "nodeConfigName": {
             "value": "[variables('tfsNodeConfigName')]"
-          },
-          "artifactsUri": {
-            "value": "[parameters('artifactsUri')]"
           }
         }
       }
