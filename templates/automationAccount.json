@@ -240,7 +240,7 @@
                             "name": "[variables('dscConfigurations').JumpBoxConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\"}}')]"
+                            "configurationData": "concat('{\"AllNodes\":[{\"Message\":\"All nodes message\",\"NodeName\":\"*\",\"DomainName\":\"', parameters('domainName'), '\"},{\"Message\":\"sql01 message\",\"NodeName\":\"sql01\",\"ComputerName\":\"sql01.seicdevops.local\"},{\"Message\":\"sql02 message\",\"NodeName\":\"sql02\",\"ComputerName\":\"sql02.seicdevops.local\"}]}')"
                         }
                     }
                 },
