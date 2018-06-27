@@ -176,7 +176,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').DomainControllerConfig.script)]"
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').DomainControllerConfig.script)]"
                         }
                     }
                 },
@@ -211,7 +211,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').JumpBoxConfig.script)]"
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').JumpBoxConfig.script)]"
                         }
                     }
                 },
@@ -249,7 +249,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').SqlServerConfig.script)]"
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').SqlServerConfig.script)]"
                         }
                     }
                 },
@@ -286,7 +286,7 @@
                         "overwrite": "true",
                         "source": {
                             "type": "uri",
-                            "value": "[concat(parameters('artifactsUri'), variables('dscConfigurations').TfsConfig.script)]"
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').TfsConfig.script)]"
                         }
                     }
                 },
