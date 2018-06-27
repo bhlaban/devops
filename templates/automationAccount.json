@@ -278,7 +278,7 @@
                             "name": "[variables('dscConfigurations').SqlServerConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\",\"ComputerName\":\"', variables('dscConfigurations').SqlServerConfig.computerName, '\"}}')]"
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"*\",\"DomainName\":\"', parameters('domainName'), '\"},{\"NodeName\":\"', variables('dscConfigurations').SqlServerConfig.computerName, '\",\"ComputerName\":\"', variables('dscConfigurations').SqlServerConfig.computerName, '\"}]}')]"
                         }
                     }
                 },
