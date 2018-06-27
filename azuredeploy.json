@@ -53,17 +53,17 @@
     "jumpBoxVmName": "jumpbox01",
     "jumpBoxVmSize": "Standard_D4_v3",
     "jumpBoxConfigName": "JumpBoxConfig",
-    "jumpBoxNodeConfigName": "JumpBoxConfig.localhost",
+    "jumpBoxNodeConfigName": "[concat(variables('jumpBoxConfigName'), '.localhost']",
     "dcIpAddress": "10.0.1.10",
     "dcVmName": "dc01",
     "dcVmSize": "Standard_D4_v3",
     "dcConfigName": "DomainControllerConfig",
-    "dcNodeConfigName": "DomainControllerConfig.localhost",
+    "dcNodeConfigName": "[concat(variables('dcConfigName'), '.localhost']",
     "sqlServerIpAddress": "10.0.3.10",
-    "sqlServerVmName": "sql01",
+    "sqlServerVmName": "sqlserver01",
     "sqlServerVmSize": "Standard_D4_v3",
     "sqlServerConfigName": "SqlServerConfig",
-    "sqlServerNodeConfigName": "SqlServerConfig.localhost",
+    "sqlServerNodeConfigName": "[concat(variables('sqlServerConfigName'), '.localhosts']",
     "jamaIpAddress": "10.0.2.10",
     "jamaVmName": "jama01",
     "jamaVmSize": "Standard_D4_v3",
@@ -71,13 +71,13 @@
     "tfsVmName": "tfs01",
     "tfsVmSize": "Standard_D4_v3",
     "tfsConfigName": "TfsConfig",
-    "tfsNodeConfigName": "TfsConfig.localhost",
+    "tfsNodeConfigName": "[concat(variables('tfsConfigName'), '.localhost']",
     "templates": {
       "automationAccountTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/automationAccount.json', parameters('_artifactsLocationSasToken')))]",
       "networkTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/virtualNetwork.json', parameters('_artifactsLocationSasToken')))]",
       "domainControllerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/domainController.json', parameters('_artifactsLocationSasToken')))]",
       "jumpBoxTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jumpBox.json', parameters('_artifactsLocationSasToken')))]",
-      "sqlTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
+      "sqlServerTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/sqlServer.json', parameters('_artifactsLocationSasToken')))]",
       "jamaTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/jama.json', parameters('_artifactsLocationSasToken')))]",
       "tfsTemplate": "[uri(parameters('_artifactsLocation'), concat('templates/tfs.json', parameters('_artifactsLocationSasToken')))]"
     }
@@ -115,14 +115,8 @@
           "sqlServerConfigName": {
             "value": "[variables('sqlServerConfigName')]"
           },
-          "sqlServerComputerName": {
-            "value": "[variables('sqlServerVmName')]"
-          },
           "tfsConfigName": {
             "value": "[variables('tfsConfigName')]"
-          },
-          "tfsComputerName": {
-            "value": "[variables('tfsVmName')]"
           },
           "compileDateTime": {
             "value": "[parameters('compileDateTime')]"
@@ -283,7 +277,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('templates').sqlTemplate]",
+          "uri": "[variables('templates').sqlServerTemplate]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

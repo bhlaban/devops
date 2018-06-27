@@ -5,9 +5,9 @@ configuration JumpBoxConfig
     Node $AllNodes.NodeName
     {
         File AllNodesFile {
-            DestinationPath = "C:\Deploy.txt"
+            DestinationPath = "C:\readme.txt"
             Ensure = "Present"
-            Contents = "AllNodes.DomainName: $AllNodes.DomainName AllNodes.Message: $AllNodes.Message Node.Message: $Node.Message Node.ComputerName: $Node.ComputerName"
+            Contents = "This file was created by Azure Automation DSC"
         }
     }
 }

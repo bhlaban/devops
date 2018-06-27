@@ -8,7 +8,7 @@ configuration SqlServerConfig
     {
         Computer JoinDomain
         {
-            Name = $Node.ComputerName
+            Name = $Node.NodeName
             DomainName = $Node.DomainName
             Credential = $domainCredential
         }
@@ -17,8 +17,8 @@ configuration SqlServerConfig
         {
             Name = $domainCredential.UserName
             LoginType = "WindowsUser"
-			ServerName = $Node.ComputerName
-			InstanceName = $Node.ComputerName
+			ServerName = $Node.NodeName
+			InstanceName = "MSSQLSERVER"
         }
 
 		SqlServerRole AddDomainAdminAccountToSysAdmin
@@ -26,8 +26,8 @@ configuration SqlServerConfig
 			Ensure = "Present"
             MembersToInclude = $domainCredential.UserName
             ServerRoleName = "sysadmin"
-			ServerName = $Node.ComputerName
-			InstanceName = $Node.ComputerName
+			ServerName = $Node.NodeName
+			InstanceName = "MSSQLSERVER"
 			DependsOn = "[SqlServerLogin]AddDomainAdminAccountToSqlServer"
         }
     }

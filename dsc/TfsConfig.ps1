@@ -8,7 +8,7 @@ configuration TfsConfig
     {
         Computer JoinDomain
         {
-            Name = $Node.ComputerName
+            Name = $Node.NodeName
             DomainName = $Node.DomainName
             Credential = $domainCredential
         }
