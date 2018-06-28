@@ -1,4 +1,4 @@
-﻿Login-AzureRmAccount -Environment AzureUSGovernment
+﻿#Login-AzureRmAccount -Environment AzureUSGovernment
 
 $location = 'usgovvirginia'
 $resourceGroupName = 'seicdevops-rg'
