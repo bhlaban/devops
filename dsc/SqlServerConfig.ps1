@@ -25,5 +25,14 @@ configuration SqlServerConfig
             Protocol = "TCP"
             Description = "Inbound rule for SQL Server to allow TCP traffic for the Database Engine."
         }
+
+        SqlServerLogin AddDomainAdminToSqlServer
+        {
+            Ensure = 'Present'
+            Name = $domainCredential.UserName
+            LoginType = 'WindowsUser'
+            ServerName = @Node.NodeName
+            InstanceName = 'MSSQLSERVER'
+        }
     }
 }
