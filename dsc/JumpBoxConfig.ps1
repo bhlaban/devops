@@ -11,7 +11,7 @@ configuration JumpBoxConfig
 
         cChocoPackageInstaller Putty
         {
-            Name = "putty"
+            Name = "putty.install"
             DependsOn = "[cChocoInstaller]InstallChocolatey"
         }
     }
