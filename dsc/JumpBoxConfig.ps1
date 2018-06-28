@@ -1,13 +1,18 @@
 configuration JumpBoxConfig
 {
-    Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName @{ModuleName='cChoco';ModuleVersion='2.3.1.0'},'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {
-        File AllNodesFile {
-            DestinationPath = "C:\readme.txt"
-            Ensure = "Present"
-            Contents = "This file was created by Azure Automation DSC"
+        cChocoInstaller InstallChocolatey
+        {
+            InstallDir = "C:\choco"
+        }
+
+        cChocoPackageInstaller Putty
+        {
+            Name = "putty"
+            DependsOn = "[cChocoInstaller]InstallChocolatey"
         }
     }
 }

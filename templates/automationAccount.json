@@ -61,6 +61,10 @@
             }
         },
         "dscResources": {
+            "cChoco": {
+                "name": "cChoco",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/cchoco.2.3.1.nupkg"
+            },
             "ComputerManagementDsc": {
                 "name": "ComputerManagementDsc",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/computermanagementdsc.5.1.0.nupkg"
@@ -91,6 +95,20 @@
                 }
             },
             "resources": [
+                {
+                    "name": "[variables('dscResources').cChoco.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('dscResources').cChoco.url]"
+                        }
+                    }
+                },
                 {
                     "name": "[variables('dscResources').ComputerManagementDsc.name]",
                     "type": "modules",
@@ -204,7 +222,8 @@
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]"
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').cChoco.name]"
                     ],
                     "properties": {
                         "state": "Published",
