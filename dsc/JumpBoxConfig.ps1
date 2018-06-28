@@ -8,16 +8,21 @@ configuration JumpBoxConfig
             DebugMode = 'ForceModuleImport'
         }
 
-        cChocoInstaller installChoco
+        cChocoInstaller InstallChoco
         {
             InstallDir = "c:\choco"
         }
 
-        cChocoPackageInstaller installChrome
+        cChocoPackageInstaller InstallChrome
         {
             Name = "googlechrome"
-            AutoUpgrade = $True
-            DependsOn = "[cChocoInstaller]installChoco"
+            DependsOn = "[cChocoInstaller]InstallChoco"
+        }
+
+        cChocoPackageInstaller InstallPutty
+        {
+            Name = "putty.install"
+            DependsOn = "[cChocoInstaller]InstallChoco"
         }
     }
 }
