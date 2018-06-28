@@ -16,12 +16,14 @@ configuration JumpBoxConfig
         cChocoPackageInstaller InstallChrome
         {
             Name = "googlechrome"
+            Ensure = "Present"
             DependsOn = "[cChocoInstaller]InstallChoco"
         }
 
         cChocoPackageInstaller InstallPutty
         {
             Name = "putty.install"
+            Ensure = "Present"
             DependsOn = "[cChocoInstaller]InstallChoco"
         }
     }
