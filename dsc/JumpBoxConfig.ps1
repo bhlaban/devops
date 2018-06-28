@@ -1,25 +1,23 @@
 configuration JumpBoxConfig
 {
-    Import-DscResource -ModuleName @{ModuleName='cChoco';ModuleVersion='2.3.1.0'},@{ModuleName='xPowerShellExecutionPolicy';ModuleVersion='3.0.0.0'},'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName @{ModuleName = 'cChoco'; ModuleVersion = '2.3.1.0'}, 'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {
-        xPowerShellExecutionPolicy ExecutionPolicy
-        {
-            ExecutionPolicyScope = "LocalMachine"
-            ExecutionPolicy      = "RemoteSigned"
+        LocalConfigurationManager {
+            DebugMode = 'ForceModuleImport'
         }
 
-        cChocoInstaller InstallChocolatey
+        cChocoInstaller installChoco
         {
-            InstallDir = "C:\choco"
-            DependsOn = "[xPowerShellExecutionPolicy]ExecutionPolicy"
+            InstallDir = "c:\choco"
         }
 
-        cChocoPackageInstaller Putty
+        cChocoPackageInstaller installChrome
         {
-            Name = "putty.install"
-            DependsOn = "[cChocoInstaller]InstallChocolatey"
+            Name = "googlechrome"
+            AutoUpgrade = $True
+            DependsOn = "[cChocoInstaller]installChoco"
         }
     }
 }

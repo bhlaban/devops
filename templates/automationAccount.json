@@ -77,10 +77,6 @@
                 "name": "xActiveDirectory",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.2.16.0.nupkg"
             },
-            "xPowerShellExecutionPolicy": {
-                "name": "xPowerShellExecutionPolicy",
-                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xpowershellexecutionpolicy.3.0.0.nupkg"
-            },
             "xStorage": {
                 "name": "xStorage",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/xstorage.3.2.0.nupkg"
@@ -156,20 +152,6 @@
                     }
                 },
                 {
-                    "name": "[variables('dscResources').xPowerShellExecutionPolicy.name]",
-                    "type": "modules",
-                    "apiVersion": "2015-10-31",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('dscResources').xPowerShellExecutionPolicy.url]"
-                        }
-                    }
-                },
-                {
                     "name": "[variables('dscResources').xStorage.name]",
                     "type": "modules",
                     "apiVersion": "2015-10-31",
@@ -241,8 +223,7 @@
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
-                        "[variables('dscResources').cChoco.name]",
-                        "[variables('dscResources').xPowerShellExecutionPolicy.name]"
+                        "[variables('dscResources').cChoco.name]"
                     ],
                     "properties": {
                         "state": "Published",
