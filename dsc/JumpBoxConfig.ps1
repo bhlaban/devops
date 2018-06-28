@@ -6,13 +6,14 @@ configuration JumpBoxConfig
     {
         PowerShellExecutionPolicy ExecutionPolicy
         {
-            ExecutionPolicyScope = 'LocalMachine'
-            ExecutionPolicy      = 'RemoteSigned'
+            ExecutionPolicyScope = "LocalMachine"
+            ExecutionPolicy      = "RemoteSigned"
         }
 
         cChocoInstaller InstallChocolatey
         {
             InstallDir = "C:\choco"
+            DependsOn = "[PowerShellExecutionPolicy]ExecutionPolicy"
         }
 
         cChocoPackageInstaller Putty
