@@ -31,7 +31,7 @@ configuration SqlServerConfig
             Ensure = 'Present'
             Name = $domainCredential.UserName
             LoginType = 'WindowsUser'
-            ServerName = @Node.NodeName
+            ServerName = $Node.NodeName
             InstanceName = 'MSSQLSERVER'
         }
     }
