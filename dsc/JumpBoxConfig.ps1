@@ -1,10 +1,10 @@
 configuration JumpBoxConfig
 {
-    Import-DscResource -ModuleName @{ModuleName='cChoco';ModuleVersion='2.3.1.0'},@{ModuleName='ComputerManagementDsc';ModuleVersion='5.1.0.0'},'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName @{ModuleName='cChoco';ModuleVersion='2.3.1.0'},@{ModuleName='xPowerShellExecutionPolicy';ModuleVersion='3.0.0.0'},'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {
-        PowerShellExecutionPolicy ExecutionPolicy
+        xPowerShellExecutionPolicy ExecutionPolicy
         {
             ExecutionPolicyScope = "LocalMachine"
             ExecutionPolicy      = "RemoteSigned"
