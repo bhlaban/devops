@@ -13,7 +13,7 @@ configuration JumpBoxConfig
         cChocoInstaller InstallChocolatey
         {
             InstallDir = "C:\choco"
-            DependsOn = "[PowerShellExecutionPolicy]ExecutionPolicy"
+            DependsOn = "[xPowerShellExecutionPolicy]ExecutionPolicy"
         }
 
         cChocoPackageInstaller Putty
