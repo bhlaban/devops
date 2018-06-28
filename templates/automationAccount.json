@@ -204,7 +204,6 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').DomainControllerConfig.name]"
                     ],
                     "properties": {
@@ -223,7 +222,8 @@
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
-                        "[variables('dscResources').cChoco.name]"
+                        "[variables('dscResources').cChoco.name]",
+                        "[variables('dscResources').ComputerManagementDsc.name]"
                     ],
                     "properties": {
                         "state": "Published",
@@ -240,7 +240,6 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').JumpBoxConfig.name]"
                     ],
                     "properties": {
@@ -278,7 +277,6 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').SqlServerConfig.name]"
                     ],
                     "properties": {
@@ -315,7 +313,6 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').TfsConfig.name]"
                     ],
                     "properties": {
