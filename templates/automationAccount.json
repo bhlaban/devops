@@ -192,7 +192,7 @@
                         "[parameters('AutomationAccountName')]"
                     ],
                     "properties": {
-                        "userName": "[concat(if(greater(indexOf(parameters('domainName'),'.'),14),substring(parameters('domainName'),0,14),substring(parameters('domainName'),0,sub(indexOf(parameters('domainName'),'.'),1))), '\\', parameters('adminUsername'))]",
+                        "userName": "[concat(if(greater(indexOf(parameters('domainName'),'.'),14),substring(parameters('domainName'),0,15),substring(parameters('domainName'),0,indexOf(parameters('domainName'),'.'))), '\\', parameters('adminUsername'))]",
                         "password": "[parameters('adminPassword')]"
                     }
                 },
