@@ -315,7 +315,7 @@
                             "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
                         }
                     }
-                }
+                },
                 {
                     "name": "[variables('dscConfigurations').SqlServerConfig.name]",
                     "type": "configurations",
