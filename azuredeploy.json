@@ -108,6 +108,9 @@
           "sqlServerConfigName": {
             "value": "[variables('sqlServerConfigName')]"
           },
+          "proGetConfigName": {
+            "value": "[variables('proGetConfigName')]"
+          },
           "tfsConfigName": {
             "value": "[variables('tfsConfigName')]"
           },
