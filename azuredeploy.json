@@ -53,7 +53,7 @@
     "jamaIpAddress": "10.0.2.10",
     "jamaVmName": "jama01",
     "jamaVmSize": "Standard_D4_v3",
-    "[proGetIpAddress": "10.0.2.20",
+    "proGetIpAddress": "10.0.2.30",
     "proGetVmName": "proget01",
     "proGetVmSize": "Standard_D4_v3",
     "proGetConfigName": "automation-config-proget",
