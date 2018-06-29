@@ -4,10 +4,6 @@ configuration JumpBoxConfig
 
     Node $AllNodes.NodeName
     {
-        LocalConfigurationManager {
-            DebugMode = 'ForceModuleImport'
-        }
-
         cChocoInstaller InstallChoco
         {
             InstallDir = "c:\choco"
