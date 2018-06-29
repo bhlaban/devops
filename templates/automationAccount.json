@@ -20,6 +20,9 @@
         "jumpBoxConfigName": {
             "type": "string"
         },
+        "proGetConfigName": {
+            "type": "string"
+        },
         "sqlServerConfigName": {
             "type": "string"
         },
@@ -46,6 +49,12 @@
                 "description": "Minimum viable configuration for a jumpbox role",
                 "script": "[concat('dsc/', parameters('jumpBoxConfigName'), '.ps1')]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('jumpBoxConfigName'), parameters('compileDateTime'))]"
+            },
+            "ProGetConfig": {
+                "name": "[parameters('proGetConfigName')]",
+                "description": "Minimum viable configuration for a proget server role",
+                "script": "[concat('dsc/', parameters('proGetConfigName'), '.ps1')]",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('proGetConfigName'), parameters('compileDateTime'))]"
             },
             "SqlServerConfig": {
                 "name": "[parameters('sqlServerConfigName')]",
@@ -270,6 +279,43 @@
                         }
                     }
                 },
+                {
+                    "name": "[variables('dscConfigurations').ProGetConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "domainCredential"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').ProGetConfig.script)]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').ProGetConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').ProGetConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').ProGetConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                }
                 {
                     "name": "[variables('dscConfigurations').SqlServerConfig.name]",
                     "type": "configurations",

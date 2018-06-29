@@ -38,25 +38,30 @@
     "dataSubnetName": "data-subnet",
     "jumpBoxVmName": "jumpbox01",
     "jumpBoxVmSize": "Standard_D4_v3",
-    "jumpBoxConfigName": "JumpBoxConfig",
+    "jumpBoxConfigName": "automation-config-jumpbox",
     "jumpBoxNodeConfigName": "[concat(variables('jumpBoxConfigName'), '.localhost')]",
     "dcIpAddress": "10.0.1.10",
     "dcVmName": "dc01",
     "dcVmSize": "Standard_D4_v3",
-    "dcConfigName": "DomainControllerConfig",
+    "dcConfigName": "automation-config-dc",
     "dcNodeConfigName": "[concat(variables('dcConfigName'), '.localhost')]",
     "sqlServerIpAddress": "10.0.3.10",
     "sqlServerVmName": "sqlserver01",
     "sqlServerVmSize": "Standard_D4_v3",
-    "sqlServerConfigName": "SqlServerConfig",
+    "sqlServerConfigName": "automation-config-sqlserver",
     "sqlServerNodeConfigName": "[concat(variables('sqlServerConfigName'), '.localhost')]",
     "jamaIpAddress": "10.0.2.10",
     "jamaVmName": "jama01",
     "jamaVmSize": "Standard_D4_v3",
+    "[proGetIpAddress": "10.0.2.20",
+    "proGetVmName": "proget01",
+    "proGetVmSize": "Standard_D4_v3",
+    "proGetConfigName": "automation-config-proget",
+    "proGetNodeConfigName": "[concat(variables('proGetConfigName'), '.localhost')]",
     "tfsIpAddress": "10.0.2.20",
     "tfsVmName": "tfs01",
     "tfsVmSize": "Standard_D4_v3",
-    "tfsConfigName": "TfsConfig",
+    "tfsConfigName": "automation-config-tfs",
     "tfsNodeConfigName": "[concat(variables('tfsConfigName'), '.localhost')]",
     "artifactsUri": "[deployment().properties.templateLink.uri]",
     "templates": {
@@ -66,6 +71,7 @@
       "jumpBoxTemplate": "[uri(variables('artifactsUri'), 'templates/jumpBox.json')]",
       "sqlServerTemplate": "[uri(variables('artifactsUri'), 'templates/sqlServer.json')]",
       "jamaTemplate": "[uri(variables('artifactsUri'), 'templates/jama.json')]",
+      "proGetTemplate": "[uri(variables('artifactsUri'), 'templates/proGet.json')]",
       "tfsTemplate": "[uri(variables('artifactsUri'), 'templates/tfs.json')]"
     }
   },
@@ -290,7 +296,7 @@
       "apiVersion": "2015-01-01",
       "comments": "This creates the Jama VM",
       "dependsOn": [
-        "Microsoft.Resources/deployments/DomainController"
+        "Microsoft.Resources/deployments/SQLServer"
       ],
       "properties": {
         "mode": "Incremental",
@@ -324,12 +330,57 @@
       }
     },
     {
+      "name": "ProGet",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the ProGet VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SQLServer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('templates').proGetTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('proGetVmName')]"
+          },
+          "vmSize": {
+            "value": "[variables('proGetVmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "ipAddress": {
+            "value": "[variables('proGetIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('applicationSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('proGetNodeConfigName')]"
+          }
+        }
+      }
+    },
+    {
       "name": "TFS",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "comments": "This creates the TFS VM",
       "dependsOn": [
-        "Microsoft.Resources/deployments/DomainController"
+        "Microsoft.Resources/deployments/SQLServer"
       ],
       "properties": {
         "mode": "Incremental",
