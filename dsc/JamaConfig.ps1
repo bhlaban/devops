@@ -1,6 +1,6 @@
 configuration JamaConfig
 {
-    Import-DscResource -ModuleName @{ModuleName='nx';ModuleVersion='1.0.0.0'},'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName @{ModuleName='nx';ModuleVersion='1.0'},'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {
