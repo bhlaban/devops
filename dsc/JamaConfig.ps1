@@ -4,10 +4,10 @@ configuration JamaConfig
 
     Node $AllNodes.NodeName
     {
-        nxFile ExampleFile 
+        nxFile ExampleFile
          {
              DestinationPath = "/tmp/example"
-             Contents = "hello world `n"
+             Contents = "hello world"
              Ensure = "Present"
              Type = "File"
          }
