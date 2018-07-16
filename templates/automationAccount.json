@@ -428,7 +428,7 @@
                             "name": "[variables('dscConfigurations').JamaConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[{\"AllNodes\":[{\"NodeName\":\"localhost\"}]}]"
+                            "configurationData": "{\"AllNodes\":[{\"NodeName\":\"localhost\"}]}"
                         }
                     }
                 },
