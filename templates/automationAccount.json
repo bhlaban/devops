@@ -254,7 +254,7 @@
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').xActiveDirectory.name]",
                         "[variables('dscResources').xStorage.name]",
-                        "domainCredential"
+                        "DomainCredential"
                     ],
                     "properties": {
                         "state": "Published",
@@ -327,7 +327,7 @@
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').ComputerManagementDsc.name]",
-                        "domainCredential"
+                        "DomainCredential"
                     ],
                     "properties": {
                         "state": "Published",
@@ -366,7 +366,7 @@
                         "[variables('dscResources').ComputerManagementDsc.name]",
                         "[variables('dscResources').NetworkingDsc.name]",
                         "[variables('dscResources').SqlServerDsc.name]",
-                        "domainCredential"
+                        "DomainCredential"
                     ],
                     "properties": {
                         "state": "Published",
@@ -392,6 +392,43 @@
                         },
                         "parameters": {
                             "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').JamaConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').nx.name]",
+                        "LinuxCredential"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').JamaConfig.script)]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').JamaConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').JamaConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').JamaConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\", '\"}]}')]"
                         }
                     }
                 },
