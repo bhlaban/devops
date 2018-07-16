@@ -53,6 +53,8 @@
     "jamaIpAddress": "10.0.2.10",
     "jamaVmName": "jama01",
     "jamaVmSize": "Standard_D4_v3",
+    "jamaConfigName": "JamaConfig",
+    "jamaNodeConfigName": "[concat(variables('jamaConfigName'), '.localhost')]",
     "proGetIpAddress": "10.0.2.30",
     "proGetVmName": "proget01",
     "proGetVmSize": "Standard_D4_v3",
@@ -107,6 +109,9 @@
           },
           "sqlServerConfigName": {
             "value": "[variables('sqlServerConfigName')]"
+          },
+          "jamaConfigName": {
+            "value": "[variables('jamaConfigName')]"
           },
           "proGetConfigName": {
             "value": "[variables('proGetConfigName')]"
@@ -299,7 +304,8 @@
       "apiVersion": "2015-01-01",
       "comments": "This creates the Jama VM",
       "dependsOn": [
-        "Microsoft.Resources/deployments/SQLServer"
+        "Microsoft.Resources/deployments/AutomationAccount",
+        "Microsoft.Resources/deployments/Network"
       ],
       "properties": {
         "mode": "Incremental",
@@ -328,6 +334,12 @@
           },
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('jamaNodeConfigName')]"
           }
         }
       }

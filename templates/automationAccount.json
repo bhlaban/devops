@@ -26,6 +26,9 @@
         "sqlServerConfigName": {
             "type": "string"
         },
+        "jamaConfigName": {
+            "type": "string"
+        },
         "tfsConfigName": {
             "type": "string"
         },
@@ -62,6 +65,12 @@
                 "script": "[concat('dsc/', parameters('sqlServerConfigName'), '.ps1')]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('sqlServerConfigName'), parameters('compileDateTime'))]"
             },
+            "JamaConfig": {
+                "name": "[parameters('jamaConfigName')]",
+                "description": "Minimum viable configuration for a jama role",
+                "script": "[concat('dsc/', parameters('jamaConfigName'), '.ps1')]",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('jamaConfigName'), parameters('compileDateTime'))]"
+            },
             "TfsConfig": {
                 "name": "[parameters('tfsConfigName')]",
                 "description": "Minimum viable configuration for a tfs role",
@@ -81,6 +90,10 @@
             "NetworkingDsc": {
                 "name": "NetworkingDsc",
                 "url": "https://devopsgallerystorage.blob.core.windows.net/packages/networkingdsc.6.0.0.nupkg"
+            },
+            "nx": {
+                "name": "nx",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/nx.1.0.0.nupkg"
             },
             "SqlServerDsc": {
                 "name": "SqlServerDsc",
@@ -202,6 +215,19 @@
                     ],
                     "properties": {
                         "userName": "[concat(if(greater(indexOf(parameters('domainName'),'.'),14),substring(parameters('domainName'),0,15),substring(parameters('domainName'),0,indexOf(parameters('domainName'),'.'))), '\\', parameters('adminUsername'))]",
+                        "password": "[parameters('adminPassword')]"
+                    }
+                },
+                {
+                    "name": "LinuxCredential",
+                    "type": "credentials",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "userName": "[parameters('adminUsername')]",
                         "password": "[parameters('adminPassword')]"
                     }
                 },

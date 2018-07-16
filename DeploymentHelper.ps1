@@ -1,9 +1,9 @@
-﻿#Login-AzureRmAccount -Environment AzureUSGovernment
+﻿Login-AzureRmAccount -Environment AzureUSGovernment
 
 $location = 'usgovvirginia'
-$resourceGroupName = 'seicdevops-rg'
-$deploymentName = 'SEIC-DevOps'
-$domainName = 'seicdevops.local'
+$resourceGroupName = 'devops-rg'
+$deploymentName = 'DevOps'
+$domainName = 'devops.local'
 $adminUsername = 'superuser'
 $adminPassword = ConvertTo-SecureString 'P@$$word12345' -AsPlainText -Force
 $compileDateTime = Get-Date -Format g
