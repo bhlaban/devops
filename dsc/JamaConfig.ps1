@@ -2,7 +2,7 @@ configuration JamaConfig
 {
     Import-DscResource -ModuleName @{ModuleName='nx';ModuleVersion='1.0'},'PSDesiredStateConfiguration'
 
-    Node $AllNodes.NodeName
+    Node localhost
     {
         nxFile ExampleFile
          {
