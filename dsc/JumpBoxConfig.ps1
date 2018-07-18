@@ -22,5 +22,12 @@ configuration JumpBoxConfig
             Ensure = "Present"
             DependsOn = "[cChocoInstaller]InstallChoco"
         }
+
+        cChocoPackageInstaller SqlServerManagementStudio
+        {
+            Name = "sql-server-management-studio"
+            Ensure = "Present"
+            DependsOn = "[cChocoInstaller]InstallChoco"
+        }
     }
 }
