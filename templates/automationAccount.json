@@ -428,7 +428,7 @@
                             "name": "[variables('dscConfigurations').JamaConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\"}]}')]"
                         }
                     }
                 },
