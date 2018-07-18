@@ -246,13 +246,28 @@
                     }
                 },
                 {
+                    "name": "[variables('dscConfigurations').JumpBoxConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[variables('dscResources').cChoco.name]"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').JumpBoxConfig.script)]"
+                        }
+                    }
+                },
+                {
                     "name": "[variables('dscConfigurations').DomainControllerConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscResources').xActiveDirectory.name]",
                         "[variables('dscResources').xStorage.name]",
                         "DomainCredential"
                     ],
@@ -266,103 +281,11 @@
                     }
                 },
                 {
-                    "name": "[variables('dscConfigurations').DomainControllerConfig.compileName]",
-                    "type": "compilationjobs",
-                    "apiVersion": "2015-10-31",
-                    "tags": {},
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscConfigurations').DomainControllerConfig.name]"
-                    ],
-                    "properties": {
-                        "configuration": {
-                            "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
-                        },
-                        "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('dscConfigurations').JumpBoxConfig.name]",
-                    "type": "configurations",
-                    "apiVersion": "2015-10-31",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscResources').cChoco.name]"
-                    ],
-                    "properties": {
-                        "state": "Published",
-                        "overwrite": "true",
-                        "source": {
-                            "type": "uri",
-                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').JumpBoxConfig.script)]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('dscConfigurations').JumpBoxConfig.compileName]",
-                    "type": "compilationjobs",
-                    "apiVersion": "2015-10-31",
-                    "tags": {},
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscConfigurations').JumpBoxConfig.name]"
-                    ],
-                    "properties": {
-                        "configuration": {
-                            "name": "[variables('dscConfigurations').JumpBoxConfig.name]"
-                        },
-                        "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\"}]}')]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('dscConfigurations').ProGetConfig.name]",
-                    "type": "configurations",
-                    "apiVersion": "2015-10-31",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscResources').ComputerManagementDsc.name]",
-                        "DomainCredential"
-                    ],
-                    "properties": {
-                        "state": "Published",
-                        "overwrite": "true",
-                        "source": {
-                            "type": "uri",
-                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').ProGetConfig.script)]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('dscConfigurations').ProGetConfig.compileName]",
-                    "type": "compilationjobs",
-                    "apiVersion": "2015-10-31",
-                    "tags": {},
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscConfigurations').ProGetConfig.name]"
-                    ],
-                    "properties": {
-                        "configuration": {
-                            "name": "[variables('dscConfigurations').ProGetConfig.name]"
-                        },
-                        "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
-                        }
-                    }
-                },
-                {
                     "name": "[variables('dscConfigurations').SqlServerConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').ComputerManagementDsc.name]",
                         "[variables('dscResources').NetworkingDsc.name]",
                         "[variables('dscResources').SqlServerDsc.name]",
@@ -378,30 +301,11 @@
                     }
                 },
                 {
-                    "name": "[variables('dscConfigurations').SqlServerConfig.compileName]",
-                    "type": "compilationjobs",
-                    "apiVersion": "2015-10-31",
-                    "tags": {},
-                    "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscConfigurations').SqlServerConfig.name]"
-                    ],
-                    "properties": {
-                        "configuration": {
-                            "name": "[variables('dscConfigurations').SqlServerConfig.name]"
-                        },
-                        "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
-                        }
-                    }
-                },
-                {
                     "name": "[variables('dscConfigurations').JamaConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').nx.name]",
                         "LinuxCredential"
                     ],
@@ -415,20 +319,20 @@
                     }
                 },
                 {
-                    "name": "[variables('dscConfigurations').JamaConfig.compileName]",
-                    "type": "compilationjobs",
+                    "name": "[variables('dscConfigurations').ProGetConfig.name]",
+                    "type": "configurations",
                     "apiVersion": "2015-10-31",
-                    "tags": {},
+                    "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscConfigurations').JamaConfig.name]"
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "DomainCredential"
                     ],
                     "properties": {
-                        "configuration": {
-                            "name": "[variables('dscConfigurations').JamaConfig.name]"
-                        },
-                        "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\"}]}')]"
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').ProGetConfig.script)]"
                         }
                     }
                 },
@@ -452,13 +356,102 @@
                     }
                 },
                 {
+                    "name": "[variables('dscConfigurations').JumpBoxConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[variables('dscConfigurations').JumpBoxConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').JumpBoxConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\"}]}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').DomainControllerConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[variables('dscConfigurations').DomainControllerConfig.name]",
+                        "[variables('dscConfigurations').JumpBoxConfig.compileName]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').SqlServerConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[variables('dscConfigurations').SqlServerConfig.name]",
+                        "[variables('dscConfigurations').DomainControllerConfig.compileName]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').SqlServerConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').JamaConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[variables('dscConfigurations').JamaConfig.name]",
+                        "[variables('dscConfigurations').SqlServerConfig.compileName]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').JamaConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\"}]}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').ProGetConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[variables('dscConfigurations').ProGetConfig.name]",
+                        "[variables('dscConfigurations').JamaConfig.compileName]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').ProGetConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                },
+                {
                     "name": "[variables('dscConfigurations').TfsConfig.compileName]",
                     "type": "compilationjobs",
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
-                        "[parameters('AutomationAccountName')]",
-                        "[variables('dscConfigurations').TfsConfig.name]"
+                        "[variables('dscConfigurations').TfsConfig.name]",
+                        "[variables('dscConfigurations').ProGetConfig.compileName]"
                     ],
                     "properties": {
                         "configuration": {
