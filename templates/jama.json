@@ -144,7 +144,7 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "DSCForLinux",
-        "typeHandlerVersion": "2.0",
+        "typeHandlerVersion": "2.70",
         "settings": {
           "Mode": "Register",
           "NodeConfigurationName": "[parameters('nodeConfigName')]"
