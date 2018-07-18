@@ -23,9 +23,16 @@ configuration JumpBoxConfig
             DependsOn = "[cChocoInstaller]InstallChoco"
         }
 
-        cChocoPackageInstaller SqlServerManagementStudio
+        cChocoPackageInstaller InstallSqlServerManagementStudio
         {
             Name = "sql-server-management-studio"
+            Ensure = "Present"
+            DependsOn = "[cChocoInstaller]InstallChoco"
+        }
+
+        cChocoPackageInstaller InstallWinSCP
+        {
+            Name = "winscp"
             Ensure = "Present"
             DependsOn = "[cChocoInstaller]InstallChoco"
         }
