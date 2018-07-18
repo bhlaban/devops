@@ -304,8 +304,7 @@
       "apiVersion": "2015-01-01",
       "comments": "This creates the Jama VM",
       "dependsOn": [
-        "Microsoft.Resources/deployments/AutomationAccount",
-        "Microsoft.Resources/deployments/Network"
+        "Microsoft.Resources/deployments/SQLServer"
       ],
       "properties": {
         "mode": "Incremental",
