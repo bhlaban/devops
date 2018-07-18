@@ -14,13 +14,10 @@
         "adminPassword": {
             "type": "securestring"
         },
-        "dcConfigName": {
-            "type": "string"
-        },
         "jumpBoxConfigName": {
             "type": "string"
         },
-        "proGetConfigName": {
+        "dcConfigName": {
             "type": "string"
         },
         "sqlServerConfigName": {
@@ -29,7 +26,16 @@
         "jamaConfigName": {
             "type": "string"
         },
+        "proGetConfigName": {
+            "type": "string"
+        },
+        "sonarQubeConfigName": {
+            "type": "string"
+        },
         "tfsConfigName": {
+            "type": "string"
+        },
+        "tfsAgentConfigName": {
             "type": "string"
         },
         "compileDateTime": {
@@ -41,23 +47,17 @@
     },
     "variables": {
         "dscConfigurations": {
-            "DomainControllerConfig": {
-                "name": "[parameters('dcConfigName')]",
-                "description": "Minimum viable configuration for a domain controller role",
-                "script": "[concat('dsc/', parameters('dcConfigName'), '.ps1')]",
-                "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]"
-            },
             "JumpBoxConfig": {
                 "name": "[parameters('jumpBoxConfigName')]",
                 "description": "Minimum viable configuration for a jumpbox role",
                 "script": "[concat('dsc/', parameters('jumpBoxConfigName'), '.ps1')]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('jumpBoxConfigName'), parameters('compileDateTime'))]"
             },
-            "ProGetConfig": {
-                "name": "[parameters('proGetConfigName')]",
-                "description": "Minimum viable configuration for a proget server role",
-                "script": "[concat('dsc/', parameters('proGetConfigName'), '.ps1')]",
-                "compileName": "[guid(parameters('automationAccountName'), parameters('proGetConfigName'), parameters('compileDateTime'))]"
+            "DomainControllerConfig": {
+                "name": "[parameters('dcConfigName')]",
+                "description": "Minimum viable configuration for a domain controller role",
+                "script": "[concat('dsc/', parameters('dcConfigName'), '.ps1')]",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('dcConfigName'), parameters('compileDateTime'))]"
             },
             "SqlServerConfig": {
                 "name": "[parameters('sqlServerConfigName')]",
@@ -71,11 +71,29 @@
                 "script": "[concat('dsc/', parameters('jamaConfigName'), '.ps1')]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('jamaConfigName'), parameters('compileDateTime'))]"
             },
+            "ProGetConfig": {
+                "name": "[parameters('proGetConfigName')]",
+                "description": "Minimum viable configuration for a proget server role",
+                "script": "[concat('dsc/', parameters('proGetConfigName'), '.ps1')]",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('proGetConfigName'), parameters('compileDateTime'))]"
+            },
+            "SonarQubeConfig": {
+                "name": "[parameters('sonarQubeConfigName')]",
+                "description": "Minimum viable configuration for a tfs agent role",
+                "script": "[concat('dsc/', parameters('sonarQubeConfigName'), '.ps1')]",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('sonarQubeConfigName'), parameters('compileDateTime'))]"
+            },
             "TfsConfig": {
                 "name": "[parameters('tfsConfigName')]",
                 "description": "Minimum viable configuration for a tfs role",
                 "script": "[concat('dsc/', parameters('tfsConfigName'), '.ps1')]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('tfsConfigName'), parameters('compileDateTime'))]"
+            },
+            "TfsAgentConfig": {
+                "name": "[parameters('tfsAgentConfigName')]",
+                "description": "Minimum viable configuration for a tfs agent role",
+                "script": "[concat('dsc/', parameters('tfsAgentConfigName'), '.ps1')]",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('tfsAgentConfigName'), parameters('compileDateTime'))]"
             }
         },
         "dscResources": {
@@ -342,6 +360,25 @@
                     }
                 },
                 {
+                    "name": "[variables('dscConfigurations').SonarQubeConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "DomainCredential"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').SonarQubeConfig.script)]"
+                        }
+                    }
+                },
+                {
                     "name": "[variables('dscConfigurations').TfsConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
@@ -357,6 +394,25 @@
                         "source": {
                             "type": "uri",
                             "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').TfsConfig.script)]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').TfsAgentConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "domainCredential"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').TfsAgentConfig.script)]"
                         }
                     }
                 },
@@ -455,6 +511,25 @@
                     }
                 },
                 {
+                    "name": "[variables('dscConfigurations').SonarQubeConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').SonarQubeConfig.name]",
+                        "[variables('dscConfigurations').ProGetConfig.compileName]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').SonarQubeConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                },
+                {
                     "name": "[variables('dscConfigurations').TfsConfig.compileName]",
                     "type": "compilationjobs",
                     "apiVersion": "2015-10-31",
@@ -462,11 +537,30 @@
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').TfsConfig.name]",
-                        "[variables('dscConfigurations').ProGetConfig.compileName]"
+                        "[variables('dscConfigurations').SonarQubeConfig.compileName]"
                     ],
                     "properties": {
                         "configuration": {
                             "name": "[variables('dscConfigurations').TfsConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').TfsAgentConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').TfsAgentConfig.name]",
+                        "[variables('dscConfigurations').TfsConfig.compileName]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').TfsAgentConfig.name]"
                         },
                         "parameters": {
                             "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"

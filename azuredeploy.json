@@ -60,21 +60,33 @@
     "proGetVmSize": "Standard_D4_v3",
     "proGetConfigName": "ProGetConfig",
     "proGetNodeConfigName": "[concat(variables('proGetConfigName'), '.localhost')]",
+    "sonarQubeIpAddress": "10.0.2.40",
+    "sonarQubeVmName": "sonarqube01",
+    "sonarQubeVmSize": "Standard_D4_v3",
+    "sonarQubeConfigName": "SonarQubeConfig",
+    "sonarQubeNodeConfigName": "[concat(variables('sonarQubeConfigName'), '.localhost')]",
     "tfsIpAddress": "10.0.2.20",
     "tfsVmName": "tfs01",
     "tfsVmSize": "Standard_D4_v3",
     "tfsConfigName": "TfsConfig",
     "tfsNodeConfigName": "[concat(variables('tfsConfigName'), '.localhost')]",
+    "tfsAgentIpAddress": "10.0.2.50",
+    "tfsAgentVmName": "tfsagent01",
+    "tfsAgentVmSize": "Standard_D4_v3",
+    "tfsAgentConfigName": "TfsAgentConfig",
+    "tfsAgentNodeConfigName": "[concat(variables('tfsAgentConfigName'), '.localhost')]",
     "artifactsUri": "[deployment().properties.templateLink.uri]",
     "templates": {
       "automationAccountTemplate": "[uri(variables('artifactsUri'), 'templates/automationAccount.json')]",
       "networkTemplate": "[uri(variables('artifactsUri'), 'templates/virtualNetwork.json')]",
-      "domainControllerTemplate": "[uri(variables('artifactsUri'), 'templates/domainController.json')]",
       "jumpBoxTemplate": "[uri(variables('artifactsUri'), 'templates/jumpBox.json')]",
+      "domainControllerTemplate": "[uri(variables('artifactsUri'), 'templates/domainController.json')]",
       "sqlServerTemplate": "[uri(variables('artifactsUri'), 'templates/sqlServer.json')]",
       "jamaTemplate": "[uri(variables('artifactsUri'), 'templates/jama.json')]",
       "proGetTemplate": "[uri(variables('artifactsUri'), 'templates/proGet.json')]",
-      "tfsTemplate": "[uri(variables('artifactsUri'), 'templates/tfs.json')]"
+      "sonarQubeTemplate": "[uri(variables('artifactsUri'), 'templates/sonarQube.json')]",
+      "tfsTemplate": "[uri(variables('artifactsUri'), 'templates/tfs.json')]",
+      "tfsAgentTemplate": "[uri(variables('artifactsUri'), 'templates/tfsAgent.json')]"
     }
   },
   "resources": [
@@ -101,11 +113,11 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "dcConfigName": {
-            "value": "[variables('dcConfigName')]"
-          },
           "jumpBoxConfigName": {
             "value": "[variables('jumpBoxConfigName')]"
+          },
+          "dcConfigName": {
+            "value": "[variables('dcConfigName')]"
           },
           "sqlServerConfigName": {
             "value": "[variables('sqlServerConfigName')]"
@@ -116,8 +128,14 @@
           "proGetConfigName": {
             "value": "[variables('proGetConfigName')]"
           },
+          "sonarQubeConfigName": {
+            "value": "[variables('sonarQubeConfigName')]"
+          },
           "tfsConfigName": {
             "value": "[variables('tfsConfigName')]"
+          },
+          "tfsAgentConfigName": {
+            "value": "[variables('tfsAgentConfigName')]"
           },
           "compileDateTime": {
             "value": "[parameters('compileDateTime')]"
@@ -165,6 +183,49 @@
       }
     },
     {
+      "name": "JumpBox",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the JumpBox VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/AutomationAccount",
+        "Microsoft.Resources/deployments/Network"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('templates').jumpBoxTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('jumpBoxVmName')]"
+          },
+          "vmSize": {
+            "value": "[variables('jumpBoxVmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('managementSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('jumpBoxNodeConfigName')]"
+          }
+        }
+      }
+    },
+    {
       "name": "DomainController",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
@@ -206,49 +267,6 @@
           },
           "nodeConfigName": {
             "value": "[variables('dcNodeConfigName')]"
-          }
-        }
-      }
-    },
-    {
-      "name": "JumpBox",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "comments": "This creates the JumpBox VM",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/AutomationAccount",
-        "Microsoft.Resources/deployments/Network"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('templates').jumpBoxTemplate]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "vmName": {
-            "value": "[variables('jumpBoxVmName')]"
-          },
-          "vmSize": {
-            "value": "[variables('jumpBoxVmSize')]"
-          },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "existingVnetName": {
-            "value": "[variables('vnetName')]"
-          },
-          "existingSubnetName": {
-            "value": "[variables('managementSubnetName')]"
-          },
-          "automationAccountName": {
-            "value": "[variables('automationAccountName')]"
-          },
-          "nodeConfigName": {
-            "value": "[variables('jumpBoxNodeConfigName')]"
           }
         }
       }
@@ -389,6 +407,51 @@
       }
     },
     {
+      "name": "SonarQube",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the SonarQube VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SQLServer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('templates').sonarQubeTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('sonarQubeVmName')]"
+          },
+          "vmSize": {
+            "value": "[variables('sonarQubeVmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "ipAddress": {
+            "value": "[variables('sonarQubeIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('applicationSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('sonarQubeNodeConfigName')]"
+          }
+        }
+      }
+    },
+    {
       "name": "TFS",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
@@ -429,6 +492,51 @@
           },
           "nodeConfigName": {
             "value": "[variables('tfsNodeConfigName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TFS-Agent",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the TFS Agent VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/TFS"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('templates').tfsAgentTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('tfsAgentVmName')]"
+          },
+          "vmSize": {
+            "value": "[variables('tfsAgentVmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "ipAddress": {
+            "value": "[variables('tfsAgentIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('applicationSubnetName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('tfsAgentNodeConfigName')]"
           }
         }
       }
