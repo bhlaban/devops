@@ -251,6 +251,7 @@
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').cChoco.name]"
                     ],
                     "properties": {
@@ -268,6 +269,7 @@
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').xStorage.name]",
                         "DomainCredential"
                     ],
@@ -286,6 +288,7 @@
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').ComputerManagementDsc.name]",
                         "[variables('dscResources').NetworkingDsc.name]",
                         "[variables('dscResources').SqlServerDsc.name]",
@@ -306,6 +309,7 @@
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').nx.name]",
                         "LinuxCredential"
                     ],
@@ -324,6 +328,7 @@
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscResources').ComputerManagementDsc.name]",
                         "DomainCredential"
                     ],
@@ -361,6 +366,7 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').JumpBoxConfig.name]"
                     ],
                     "properties": {
@@ -378,6 +384,7 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').DomainControllerConfig.name]",
                         "[variables('dscConfigurations').JumpBoxConfig.compileName]"
                     ],
@@ -396,6 +403,7 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').SqlServerConfig.name]",
                         "[variables('dscConfigurations').DomainControllerConfig.compileName]"
                     ],
@@ -414,6 +422,7 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').JamaConfig.name]",
                         "[variables('dscConfigurations').SqlServerConfig.compileName]"
                     ],
@@ -432,6 +441,7 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').ProGetConfig.name]",
                         "[variables('dscConfigurations').JamaConfig.compileName]"
                     ],
@@ -450,6 +460,7 @@
                     "apiVersion": "2015-10-31",
                     "tags": {},
                     "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').TfsConfig.name]",
                         "[variables('dscConfigurations').ProGetConfig.compileName]"
                     ],
