@@ -142,8 +142,8 @@
       }
     },
     {
+      "name": "[concat(parameters('vmName'), '-onboard-dsc')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/', parameters('vmName'), '-onboard-dsc')]",
       "apiVersion": "2017-12-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
