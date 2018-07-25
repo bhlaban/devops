@@ -59,7 +59,8 @@
     }
   },
   "variables": {
-    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]"
+    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
+    "publicIpName": "[concat(variables('networkInterfaceName'), '-ip')]"
   },
   "resources": [
     {
@@ -71,6 +72,15 @@
         "sku": {
           "name": "OMS"
         }
+      }
+    },
+    {
+      "name": "[variables('publicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
       }
     },
     {
@@ -86,6 +96,9 @@
             "properties": {
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[parameters('ipAddress')]",
+              "publicIpAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpName'))]"
+              },
               "subnet": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
               }
