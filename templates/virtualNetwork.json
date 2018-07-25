@@ -37,6 +37,36 @@
       "metadata": {
         "description": "List of DNS servers in the network"
       }
+    },
+    "jumpBoxPublicIpName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of public IP address for JumpBox"
+      }
+    },
+    "jamaPublicIpName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of public IP address for Jama"
+      }
+    },
+    "proGetPublicIpName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of public IP address for ProGet"
+      }
+    },
+    "sonarQubePublicIpName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of public IP address for SonarQube"
+      }
+    },
+    "tfsPublicIpName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of public IP address for TFS"
+      }
     }
   },
   "variables": {
@@ -46,6 +76,51 @@
     "dataNetworkSecurityGroupName": "[concat(parameters('vnetName'), '-', parameters('dataSubnetName'), '-nsg')]"
   },
   "resources": [
+    {
+      "name": "[parameters('jumpBoxPublicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[parameters('jamaPublicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[parameters('proGetPublicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[parameters('sonarQubePublicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[parameters('tfsPublicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('managementNetworkSecurityGroupName')]",

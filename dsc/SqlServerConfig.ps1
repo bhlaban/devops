@@ -34,5 +34,15 @@ configuration SqlServerConfig
             ServerName = $Node.NodeName
             InstanceName = 'MSSQLSERVER'
         }
+
+        SqlServerRole AddDomainAdminToSysAdmin
+        {
+			Ensure = "Present"
+            MembersToInclude = $domainCredential.UserName
+            ServerRoleName = "sysadmin"
+			ServerName = $Node.NodeName
+			InstanceName = "MSSQLSERVER"
+			DependsOn = "[SqlServerLogin]AddDomainAdminToSqlServer"
+        }
     }
 }

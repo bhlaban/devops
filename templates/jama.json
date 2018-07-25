@@ -45,6 +45,12 @@
         "description": "The name of the subnet to connect to"
       }
     },
+    "existingPublicIpName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the public IP to use"
+      }
+    },
     "automationAccountName": {
       "type": "string",
       "metadata": {
@@ -59,8 +65,7 @@
     }
   },
   "variables": {
-    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]",
-    "publicIpName": "[concat(variables('networkInterfaceName'), '-ip')]"
+    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]"
   },
   "resources": [
     {
@@ -75,21 +80,12 @@
       }
     },
     {
-      "name": "[variables('publicIpName')]",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2017-09-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publicIPAllocationMethod": "Static"
-      }
-    },
-    {
       "name": "[variables('networkInterfaceName')]",
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
+        "[resourceId('Microsoft.Network/publicIpAddresses', parameters('existingPublicIpName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -99,7 +95,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[parameters('ipAddress')]",
               "publicIpAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('existingPublicIpName'))]"
               },
               "subnet": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
