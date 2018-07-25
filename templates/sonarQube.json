@@ -84,9 +84,7 @@
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses/', parameters('existingPublicIpName'))]"
-      ],
+      "dependsOn": [],
       "properties": {
         "ipConfigurations": [
           {
