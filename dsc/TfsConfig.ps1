@@ -4,8 +4,8 @@ configuration TfsConfig
 
     Import-DscResource -ModuleName @{ModuleName='ComputerManagementDsc';ModuleVersion='5.1.0.0'},'PSDesiredStateConfiguration'
 
-    $downloadLink = "https://go.microsoft.com/fwlink/?LinkId=856344"
-    $installerDownload = $env:TEMP + "\tfs_installer.exe"
+    $tfsDownload = "https://go.microsoft.com/fwlink/?LinkId=856344"
+    $tfsInstaller = $env:TEMP + "\tfs_installer.exe"
 
     Node $AllNodes.NodeName
     {
@@ -22,11 +22,12 @@ configuration TfsConfig
                 return @{ 'Result' = $true }
             }
             SetScript = {
-                Write-Host "Downloading TFS: " + $using:downloadLink
-                Invoke-WebRequest -Uri $using:downloadLink -OutFile $using:installerDownload
+                Write-Host "Downloading TFS: " + $tfsInstaller
+                $webClient = New-Object System.Net.WebClient
+                $webClient.DownloadFile($tfsDownload, $tfsInstaller)
             }
             TestScript = {
-                Test-Path $using:installerDownload
+                Test-Path $tfsInstaller
             }
 			DependsOn = "[Computer]JoinDomain"
         }
