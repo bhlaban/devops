@@ -1,6 +1,9 @@
 configuration SqlServerConfig
 {
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
+    $proGetCredential = Get-AutomationPSCredential -Name "ProGetCredential"
+    $sqlInstance = "MSSQLSERVER"
+    $proGetDatabaseName = "ProGet"
 
     Import-DscResource -ModuleName @{ModuleName='ComputerManagementDsc';ModuleVersion='5.1.0.0'},@{ModuleName='NetworkingDsc';ModuleVersion='6.0.0.0'},@{ModuleName='SqlServerDsc';ModuleVersion='11.3.0.0'},'PSDesiredStateConfiguration'
 
@@ -26,23 +29,50 @@ configuration SqlServerConfig
             Description = "Inbound rule for SQL Server to allow TCP traffic for the Database Engine."
         }
 
-        SqlServerLogin AddDomainAdminToSqlServer
+        SqlServerLogin DomainAdminSqlServerLogin
         {
             Ensure = 'Present'
-            Name = $domainCredential.UserName
-            LoginType = 'WindowsUser'
             ServerName = $Node.NodeName
-            InstanceName = 'MSSQLSERVER'
+            InstanceName = $sqlInstance
+            LoginType = 'WindowsUser'
+            Name = $domainCredential.UserName
         }
 
-        SqlServerRole AddDomainAdminToSysAdmin
+        SqlServerRole DomainAdminSqlServerRole
         {
 			Ensure = "Present"
-            MembersToInclude = $domainCredential.UserName
-            ServerRoleName = "sysadmin"
 			ServerName = $Node.NodeName
-			InstanceName = "MSSQLSERVER"
-			DependsOn = "[SqlServerLogin]AddDomainAdminToSqlServer"
+			InstanceName = $sqlInstance
+            ServerRoleName = "sysadmin"
+            MembersToInclude = $domainCredential.UserName
+			DependsOn = "[SqlServerLogin]DomainAdminSqlServerLogin"
+        }
+
+        SqlServerLogin ProGetSqlServerLogin
+        {
+            Ensure = 'Present'
+            ServerName = $Node.NodeName
+            InstanceName = $sqlInstance
+            LoginType = 'WindowsUser'
+            Name = $proGetCredential.UserName
+        }
+
+        SqlDatabase ProGetSqlDatabase
+        {
+			Ensure = "Present"
+			ServerName = $Node.NodeName
+            InstanceName = $sqlInstance
+            Name = $proGetDatabaseName
+			DependsOn = "[SqlServerLogin]ProGetSqlServerLogin"
+        }
+
+        SqlDatabaseOwner ProGetSqlDatabaseOwner
+        {
+			ServerName = $Node.NodeName
+			InstanceName = $sqlInstance
+            Database = $proGetDatabaseName
+            Name = $proGetCredential.UserName
+			DependsOn = "[SqlServerLogin]ProGetSqlServerLogin"
         }
     }
 }
