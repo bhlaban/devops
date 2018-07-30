@@ -1,15 +1,25 @@
 configuration TfsConfig
 {
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
+    $tfsDownload = "https://go.microsoft.com/fwlink/?LinkId=856344"
+    $installsDirectory = "C:\Installs"
+    $tfsInstaller = Join-Path $installsDirectory "tfs-installer.exe"
 
-    Import-DscResource -ModuleName @{ModuleName = 'ComputerManagementDsc'; ModuleVersion = '5.1.0.0'}, 'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName @{ModuleName='ComputerManagementDsc';ModuleVersion='5.1.0.0'},'PSDesiredStateConfiguration'
 
-    Node $AllNodes.NodeName
+    Node localhost
     {
-        Computer JoinDomain {
-            Name       = $Node.NodeName
+        Computer JoinDomain
+        {
+            Name = $Node.NodeName
             DomainName = $Node.DomainName
             Credential = $domainCredential
+        }
+
+        File InstallsDirectory {
+            Ensure = "Present"
+            Type = "Directory"
+            DestinationPath = $installsDirectory
         }
 
         Script DownloadTFS {
@@ -18,16 +28,17 @@ configuration TfsConfig
                     GetScript = $GetScript
                     SetScript = $SetScript
                     TestScript = $TestScript
-                    Result = ('True' -in (Test-Path C:\Installs\tfs-install.msi))
+                    Result = ('True' -in (Test-Path $using:tfsInstaller))
                 }
             }
             SetScript = {
-                Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?LinkId=856344" -OutFile "C:\Installs\tfs-install.msi"
+                Invoke-WebRequest -Uri $using:tfsDownload -OutFile $using:tfsInstaller
             }
             TestScript = {
-                $Status = ('True' -in (Test-Path C:\Installs\tfs-install.msi))
+                $Status = ('True' -in (Test-Path $using:tfsInstaller))
                 $Status -eq $True
             }
+            DependsOn = "[File]InstallsDirectory"
         }
     }
 }
