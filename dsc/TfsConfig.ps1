@@ -54,7 +54,7 @@ configuration TfsConfig
                 }
             }
             SetScript = {
-                $cmd = $using:tfsInstaller + " /full /quiet /Log $using:tfsInstallLog"
+                $cmd = $using:tfsInstallFile + " /full /quiet /Log $using:tfsInstallLog"
                 Invoke-Expression $cmd | Write-Verbose
                 #Sleep for 10 seconds to make sure installer is going
                 Start-Sleep -s 10
