@@ -66,7 +66,7 @@ configuration DomainControllerConfig
             DomainName = $Node.DomainName
             DomainAdministratorCredential = $domainCredential
             UserName = $proGetCredential.UserName
-            Password = $proGetCredential.Password
+            Password = $proGetCredential.Password | ConvertTo-SecureString -AsPlainText -Force
             Ensure = "Present"
             DependsOn = "[xWaitForADDomain]WaitForDomain"
         }
