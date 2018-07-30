@@ -251,6 +251,19 @@
                     }
                 },
                 {
+                    "name": "ProGetCredential",
+                    "type": "credentials",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "userName": "[concat(if(greater(indexOf(parameters('domainName'),'.'),14),substring(parameters('domainName'),0,15),substring(parameters('domainName'),0,indexOf(parameters('domainName'),'.'))), '\\ProGet')]",
+                        "password": "[parameters('adminPassword')]"
+                    }
+                },
+                {
                     "name": "LinuxCredential",
                     "type": "credentials",
                     "apiVersion": "2015-10-31",

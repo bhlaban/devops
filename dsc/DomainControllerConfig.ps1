@@ -1,6 +1,7 @@
 configuration DomainControllerConfig
 {
-    $domainCredential = Get-AutomationPSCredential domainCredential
+    $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
+    $proGetCredential = Get-AutomationPSCredential -Name "ProGetCredential"
 
     Import-DscResource -ModuleName @{ModuleName='xActiveDirectory';ModuleVersion='2.16.0.0'},@{ModuleName='xStorage';ModuleVersion='3.2.0.0'},'PSDesiredStateConfiguration'
 
@@ -49,6 +50,25 @@ configuration DomainControllerConfig
             LogPath = 'F:\NTDS'
             SysvolPath = 'F:\SYSVOL'
             DependsOn = '[WindowsFeature]ADDS'
+        }
+
+        xWaitForADDomain WaitForDomain
+        {
+            DomainName = $Node.DomainName
+            DomainUserCredential = $domainCredential
+            RetryCount = 60
+            RetryIntervalSec = 60
+            DependsOn = "[xADDomain]Domain"
+        }
+
+        xADUser ProGetUser
+        {
+            DomainName = $Node.DomainName
+            DomainAdministratorCredential = $domainCredential
+            UserName = $proGetCredential.UserName
+            Password = $proGetCredential.Password
+            Ensure = "Present"
+            DependsOn = "[xWaitForADDomain]WaitForDomain"
         }
    }
 }
