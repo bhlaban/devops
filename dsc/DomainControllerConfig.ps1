@@ -2,7 +2,6 @@ configuration DomainControllerConfig
 {
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
     $proGetCredential = Get-AutomationPSCredential -Name "ProGetCredential"
-    $proGetNetworkCredential = $proGetCredential.GetNetworkCredential();
 
     Import-DscResource -ModuleName @{ModuleName='xActiveDirectory';ModuleVersion='2.16.0.0'},@{ModuleName='xStorage';ModuleVersion='3.2.0.0'},'PSDesiredStateConfiguration'
 
@@ -66,8 +65,8 @@ configuration DomainControllerConfig
         {
             DomainName = $Node.DomainName
             DomainAdministratorCredential = $domainCredential
-            UserName = $proGetNetworkCredential.UserName
-            Password = $proGetNetworkCredential
+            UserName = $proGetCredential.GetNetworkCredential().UserName
+            Password = $proGetCredential
             Ensure = "Present"
             DependsOn = "[xWaitForADDomain]WaitForDomain"
         }
