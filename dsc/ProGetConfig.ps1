@@ -16,6 +16,25 @@ configuration ProGetConfig
             Credential = $domainCredential
         }
 
+        WindowsFeature IIS {
+            Ensure = "Present"
+            Name = "Web-Server"
+        }
+        
+        WindowsFeature IISManagementTools
+        {
+            Ensure = "Present"
+            Name = "Web-Mgmt-Tools"
+            DependsOn='[WindowsFeature]IIS'
+        }
+
+        WindowsFeature ASPNET
+        {
+            Ensure = "Present"
+            Name = "Web-Asp-Net45"
+            DependsOn='[WindowsFeature]IIS'
+        }        
+
         File InstallsDirectory {
             Ensure = "Present"
             Type = "Directory"
