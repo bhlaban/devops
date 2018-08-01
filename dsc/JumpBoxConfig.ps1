@@ -1,7 +1,8 @@
 configuration JumpBoxConfig
 {
-    Import-DscResource -ModuleName @{ModuleName = 'cChoco'; ModuleVersion = '2.3.1.0'}, 'PSDesiredStateConfiguration'
-
+    Import-DscResource -ModuleName 'cChoco'
+    Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
+    
     Node $AllNodes.NodeName
     {
         cChocoInstaller InstallChoco

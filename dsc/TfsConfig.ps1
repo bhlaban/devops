@@ -1,5 +1,10 @@
 configuration TfsConfig
 {
+    Import-DscResource -ModuleName 'ComputerManagementDsc'
+    Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'xPendingReboot'
+    Import-DscResource -ModuleName 'xWebAdministration'
+
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
     $tfsDownload = "https://go.microsoft.com/fwlink/?LinkId=856344"
     $installsDirectory = "C:\Installs"
@@ -7,15 +12,31 @@ configuration TfsConfig
     $tfsInstallLog = Join-Path $installsDirectory "tfs-install-log.txt"
     $tfsConfigExe = "C:\Program Files\Microsoft Team Foundation Server 2018\Tools\TfsConfig.exe"
 
-    Import-DscResource -ModuleName @{ModuleName = 'ComputerManagementDsc'; ModuleVersion = '5.1.0.0'}, 'PSDesiredStateConfiguration'
-
     Node localhost
     {
+        LocalConfigurationManager{
+            RebootNodeIfNeeded = $True
+        }
+
         Computer JoinDomain
         {
             Name       = $Node.NodeName
             DomainName = $Node.DomainName
             Credential = $domainCredential
+        }
+
+        WindowsFeature IIS {
+            Ensure = "Present"
+            Name   = "Web-Server"
+        }
+
+        xWebsite StopDefaultSite
+        {
+            Ensure          = 'Present'
+            Name            = 'Default Web Site'
+            State           = 'Stopped'
+            PhysicalPath    = 'C:\inetpub\wwwroot'
+            DependsOn       = '[WindowsFeature]IIS'
         }
 
         File InstallsDirectory {
@@ -55,15 +76,41 @@ configuration TfsConfig
             SetScript  = {
                 $cmd = $using:tfsInstallFile + " /full /quiet /Log $using:tfsInstallLog"
                 Invoke-Expression $cmd | Write-Verbose
-                #Sleep for 10 seconds to make sure installer is going
                 Start-Sleep -s 10
-                #The tfs installer will per default run in the background. We will wait for it. 
                 Wait-Process -Name "tfs_installer"
             }
             TestScript = {
                 Test-Path $using:tfsConfigExe
             }
             DependsOn  = "[Script]DownloadTFS"
+        }
+
+        xPendingReboot PostInstallReboot {
+            Name = "Check for a pending reboot before changing anything"
+            DependsOn = "[Script]InstallTFS"
+        }
+
+        Script ConfigureTFS
+        {
+            GetScript = {
+                @{
+                    GetScript  = $GetScript
+                    SetScript  = $SetScript
+                    TestScript = $TestScript
+                    Result     = ('True' -in (Test-Path $using:tfsConfigExe))
+                }                
+            }
+            SetScript = {
+                $sqlServerInstance = "sqlserver01.devops.local"
+                $siteBindings = "https:*:443:tfs01.devops.local:My:generate,http:*:80:"
+                $cmd = "'$using:TfsConfigExe' unattend /configure /continue /type:NewServerAdvanced  /inputs:SqlInstance='$sqlServerInstance';'SiteBindings='$siteBindings'"
+                Invoke-Expression $cmd | Write-Verbose
+            }
+            TestScript = {
+                $sites = Get-WebBinding | Where-Object {$_.bindingInformation -like "*tfs*" }
+                -not [String]::IsNullOrEmpty($sites)
+            }
+            DependsOn = "[xPendingReboot]PostInstallReboot","[xWebsite]StopDefaultSite"
         }
     }
 }

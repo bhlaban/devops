@@ -1,9 +1,11 @@
 configuration DomainControllerConfig
 {
+    Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'xActiveDirectory'
+    Import-DscResource -ModuleName 'xStorage'
+
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
     $proGetCredential = Get-AutomationPSCredential -Name "ProGetCredential"
-
-    Import-DscResource -ModuleName @{ModuleName = 'xActiveDirectory'; ModuleVersion = '2.16.0.0'}, @{ModuleName = 'xStorage'; ModuleVersion = '3.2.0.0'}, 'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {

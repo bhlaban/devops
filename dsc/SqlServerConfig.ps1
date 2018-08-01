@@ -1,11 +1,14 @@
 configuration SqlServerConfig
 {
+    Import-DscResource -ModuleName 'ComputerManagementDsc'
+    Import-DscResource -ModuleName 'NetworkingDsc'
+    Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'SqlServerDsc'
+
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
     $proGetCredential = Get-AutomationPSCredential -Name "ProGetCredential"
     $sqlInstance = "MSSQLSERVER"
     $proGetDatabaseName = "ProGet"
-
-    Import-DscResource -ModuleName @{ModuleName = 'ComputerManagementDsc'; ModuleVersion = '5.1.0.0'}, @{ModuleName = 'NetworkingDsc'; ModuleVersion = '6.0.0.0'}, @{ModuleName = 'SqlServerDsc'; ModuleVersion = '11.3.0.0'}, 'PSDesiredStateConfiguration'
 
     Node $AllNodes.NodeName
     {
@@ -20,7 +23,7 @@ configuration SqlServerConfig
         {
             Name        = "SQL-Server-Database-Engine-TCP-In"
             DisplayName = "SQL Server Database Engine (TCP-In)"
-            Group = "SQL Server"
+            Group       = "SQL Server"
             Ensure      = "Present"
             Enabled     = "True"
             Direction   = "Inbound"

@@ -1,8 +1,9 @@
 configuration SonarQubeConfig
 {
-    $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
+    Import-DscResource -ModuleName 'ComputerManagementDsc'
+    Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
 
-    Import-DscResource -ModuleName @{ModuleName = 'ComputerManagementDsc'; ModuleVersion = '5.1.0.0'}, 'PSDesiredStateConfiguration'
+    $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
 
     Node $AllNodes.NodeName
     {
