@@ -86,7 +86,7 @@
       }
     },
     {
-      "name": "[concat(parameters('jumpBoxPublicIpName'), '/Microsoft.Authorization/lock')]",
+      "name": "[concat(parameters('jumpBoxPublicIpName'), '/Microsoft.Authorization/', parameters('jumpBoxPublicIpName'), '-lock')]",
       "type": "Microsoft.Network/publicIPAddresses/providers/locks",
       "apiVersion": "2015-01-01",
       "dependsOn": [
@@ -107,12 +107,36 @@
       }
     },
     {
+      "name": "[concat(parameters('jamaPublicIpName'), '/Microsoft.Authorization/', parameters('jamaPublicIpName'), '-lock')]",
+      "type": "Microsoft.Network/publicIPAddresses/providers/locks",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('jamaPublicIpName'))]"
+      ],
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "Public IP address should not be deleted."
+      }
+    },
+    {
       "name": "[parameters('proGetPublicIpName')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[concat(parameters('proGetPublicIpName'), '/Microsoft.Authorization/', parameters('proGetPublicIpName'), '-lock')]",
+      "type": "Microsoft.Network/publicIPAddresses/providers/locks",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('proGetPublicIpName'))]"
+      ],
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "Public IP address should not be deleted."
       }
     },
     {
@@ -125,12 +149,36 @@
       }
     },
     {
+      "name": "[concat(parameters('sonarQubePublicIpName'), '/Microsoft.Authorization/', parameters('sonarQubePublicIpName'), '-lock')]",
+      "type": "Microsoft.Network/publicIPAddresses/providers/locks",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('sonarQubePublicIpName'))]"
+      ],
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "Public IP address should not be deleted."
+      }
+    },
+    {
       "name": "[parameters('tfsPublicIpName')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2017-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[concat(parameters('tfsPublicIpName'), '/Microsoft.Authorization/', parameters('tfsPublicIpName'), '-lock')]",
+      "type": "Microsoft.Network/publicIPAddresses/providers/locks",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('tfsPublicIpName'))]"
+      ],
+      "properties": {
+        "level": "CanNotDelete",
+        "notes": "Public IP address should not be deleted."
       }
     },
     {
