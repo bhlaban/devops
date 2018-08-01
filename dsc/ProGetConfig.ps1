@@ -81,7 +81,7 @@ configuration ProGetConfig
                 }
             }
             SetScript  = {
-                $cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=CH3J50AN-0HN8-P34RU4-J9V4EF-83JU9CVR /ConnectionString='Data Source=sqlserver01; Initial Catalog=ProGet; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='$($using:proGetCredential.UserName)' /Password='$($using:proGetCredential.Password)' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
+                $cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=CH3J50AN-0HN8-P34RU4-J9V4EF-83JU9CVR /ConnectionString='Data Source=sqlserver01; Initial Catalog=ProGet; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='devops\proget' /Password='P@`$`$word12345' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
                 Invoke-Expression $cmd | Write-Verbose
                 Start-Sleep -s 10
                 Wait-Process -Name "ProGet.Setup"
