@@ -9,6 +9,7 @@ configuration ProGetConfig
     $installsDirectory = "C:\Installs"
     $proGetDownload = "https://inedo.com/proget/download/sql/5.1.6"
     $proGetInstaller = Join-Path $installsDirectory "ProGetSetup5.1.6.exe"
+    $proGetWebConfig = "C:\Program Files\ProGet\WebApp\web.config"
 
     Node $AllNodes.NodeName
     {
@@ -68,6 +69,28 @@ configuration ProGetConfig
                 $Status -eq $True
             }
             DependsOn  = "[File]InstallsDirectory"
+        }
+
+        Script InstallProGet {
+            GetScript  = { 
+                @{
+                    GetScript  = $GetScript
+                    SetScript  = $SetScript
+                    TestScript = $TestScript
+                    Result     = ('True' -in (Test-Path $using:proGetWebConfig))
+                }
+            }
+            SetScript  = {
+                $cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=CH3J50AN-0HN8-P34RU4-J9V4EF-83JU9CVR /ConnectionString='Data Source=sqlserver01; Initial Catalog=ProGet; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='$($using:proGetCredential.UserName)' /Password='$($using:proGetCredential.Password)' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
+                Invoke-Expression $cmd | Write-Verbose
+                Start-Sleep -s 10
+                Wait-Process -Name "ProGet.Setup"
+            }
+            TestScript = {
+                $Status = ('True' -in (Test-Path $using:proGetWebConfig))
+                $Status -eq $True
+            }
+            DependsOn  = "[Script]DownloadProGet"
         }
     }
 }
