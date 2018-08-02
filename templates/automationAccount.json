@@ -287,7 +287,7 @@
                     }
                 },
                 {
-                    "name": "ProGetCredential",
+                    "name": "ProGetDomainCredential",
                     "type": "credentials",
                     "apiVersion": "2015-10-31",
                     "location": "[resourceGroup().location]",
@@ -296,6 +296,19 @@
                     ],
                     "properties": {
                         "userName": "[concat(if(greater(indexOf(parameters('domainName'),'.'),14),substring(parameters('domainName'),0,15),substring(parameters('domainName'),0,indexOf(parameters('domainName'),'.'))), '\\proget')]",
+                        "password": "[parameters('adminPassword')]"
+                    }
+                },
+                {
+                    "name": "JamaSqlCredential",
+                    "type": "credentials",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "userName": "jama",
                         "password": "[parameters('adminPassword')]"
                     }
                 },

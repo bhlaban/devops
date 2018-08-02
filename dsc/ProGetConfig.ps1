@@ -5,7 +5,6 @@ configuration ProGetConfig
     Import-DscResource -ModuleName 'xWebAdministration'
 
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
-    $proGetCredential = Get-AutomationPSCredential -Name "ProGetCredential"
     $installsDirectory = "C:\Installs"
     $proGetDownload = "https://inedo.com/proget/download/sql/5.1.6"
     $proGetInstaller = Join-Path $installsDirectory "ProGetSetup5.1.6.exe"

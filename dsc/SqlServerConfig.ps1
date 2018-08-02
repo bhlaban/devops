@@ -6,10 +6,10 @@ configuration SqlServerConfig
     Import-DscResource -ModuleName 'SqlServerDsc'
 
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
-    $jamaCredential = Get-AutomationPSCredential -Name "JamaCredential"
-    $proGetCredential = Get-AutomationPSCredential -Name "ProGetCredential"
-    $jamaDatabaseName = "jama"
-    $proGetDatabaseName = "proget"
+    $jamaSqlCredential = Get-AutomationPSCredential -Name "JamaSqlCredential"
+    $proGetDomainCredential = Get-AutomationPSCredential -Name "ProGetDomainCredential"
+    $jamaSqlDatabaseName = "jama"
+    $proGetSqlDatabaseName = "proget"
     $sqlInstance = "MSSQLSERVER"
     
     Node $AllNodes.NodeName
@@ -48,9 +48,9 @@ configuration SqlServerConfig
             Ensure = 'Present'
             ServerName = $Node.NodeName
             InstanceName = $sqlInstance
-            Name = $jamaCredential.UserName
+            Name = $jamaSqlCredential.UserName
             LoginType = 'SqlLogin'
-            LoginCredential = $jamaCredential
+            LoginCredential = $jamaSqlCredential
             LoginMustChangePassword = $false
             LoginPasswordExpirationEnabled = $false
         }
@@ -61,7 +61,7 @@ configuration SqlServerConfig
             ServerName   = $Node.NodeName
             InstanceName = $sqlInstance
             LoginType    = 'WindowsUser'
-            Name         = $proGetCredential.UserName
+            Name         = $proGetDomainCredential.UserName
         }
 
         SqlServerRole DomainAdminSqlServerRole
@@ -79,7 +79,7 @@ configuration SqlServerConfig
             Ensure       = "Present"
             ServerName   = $Node.NodeName
             InstanceName = $sqlInstance
-            Name         = $jamaDatabaseName
+            Name         = $jamaSqlDatabaseName
             DependsOn    = "[SqlServerLogin]JamaSqlServerLogin"
         }
 
@@ -87,8 +87,8 @@ configuration SqlServerConfig
         {
             ServerName   = $Node.NodeName
             InstanceName = $sqlInstance
-            Database     = $jamaDatabaseName
-            Name         = $jamaCredential.UserName
+            Database     = $jamaSqlDatabaseName
+            Name         = $jamaSqlCredential.UserName
             DependsOn    = "[SqlServerLogin]JamaSqlServerLogin"
         }
 
@@ -97,7 +97,7 @@ configuration SqlServerConfig
             Ensure       = "Present"
             ServerName   = $Node.NodeName
             InstanceName = $sqlInstance
-            Name         = $proGetDatabaseName
+            Name         = $proGetSqlDatabaseName
             DependsOn    = "[SqlServerLogin]ProGetSqlServerLogin"
         }
 
@@ -105,8 +105,8 @@ configuration SqlServerConfig
         {
             ServerName   = $Node.NodeName
             InstanceName = $sqlInstance
-            Database     = $proGetDatabaseName
-            Name         = $proGetCredential.UserName
+            Database     = $proGetSqlDatabaseName
+            Name         = $proGetDomainCredential.UserName
             DependsOn    = "[SqlServerLogin]ProGetSqlServerLogin"
         }    }
 }
