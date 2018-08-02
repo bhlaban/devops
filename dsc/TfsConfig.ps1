@@ -47,31 +47,20 @@ configuration TfsConfig
 
         Script DownloadTFS {
             GetScript = {
-                @{
-                    GetScript = $GetScript
-                    SetScript = $SetScript
-                    TestScript = $TestScript
-                    Result = ('True' -in (Test-Path $using:tfsInstallFile))
-                }
+                return @{ 'Result' = $true }
             }
             SetScript = {
                 Invoke-WebRequest -Uri $using:tfsDownload -OutFile $using:tfsInstallFile
             }
             TestScript = {
-                $Status = ('True' -in (Test-Path $using:tfsInstallFile))
-                $Status -eq $True
+                Test-Path $using:tfsInstallFile
             }
             DependsOn = "[File]InstallsDirectory"
         }
 
         Script InstallTFS {
             GetScript = { 
-                @{
-                    GetScript = $GetScript
-                    SetScript = $SetScript
-                    TestScript = $TestScript
-                    Result = ('True' -in (Test-Path $using:tfsConfigExe))
-                }
+                return @{ 'Result' = $true }
             }
             SetScript = {
                 $cmd = $using:tfsInstallFile + " /full /quiet /Log $using:tfsInstallLog"
@@ -93,12 +82,7 @@ configuration TfsConfig
         Script ConfigureTFS
         {
             GetScript = {
-                @{
-                    GetScript = $GetScript
-                    SetScript = $SetScript
-                    TestScript = $TestScript
-                    Result = ('True' -in (Test-Path $using:tfsConfigExe))
-                }                
+                return @{ 'Result' = $true }               
             }
             SetScript = {
                 $sqlServerInstance = "sqlserver01.devops.local"
@@ -109,6 +93,7 @@ configuration TfsConfig
                 $sites = Get-WebBinding | Where-Object {$_.bindingInformation -like "*tfs*" }
                 -not [String]::IsNullOrEmpty($sites)
             }
+            PsDscRunAsCredential = $domainCredential
             DependsOn = "[xPendingReboot]PostInstallReboot","[xWebsite]StopDefaultSite"
         }
     }

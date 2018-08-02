@@ -53,40 +53,29 @@ configuration ProGetConfig
 
         Script DownloadProGet {
             GetScript = {
-                @{
-                    GetScript = $GetScript
-                    SetScript = $SetScript
-                    TestScript = $TestScript
-                    Result = ('True' -in (Test-Path $using:proGetInstaller))
-                }
+                return @{ 'Result' = $true }
             }
             SetScript = {
                 Invoke-WebRequest -Uri $using:proGetDownload -OutFile $using:proGetInstaller
             }
             TestScript = {
-                $Status = ('True' -in (Test-Path $using:proGetInstaller))
-                $Status -eq $True
+                Test-Path $using:proGetInstaller
             }
             DependsOn = "[File]InstallsDirectory"
         }
 
         Script InstallProGet {
             GetScript = { 
-                @{
-                    GetScript = $GetScript
-                    SetScript = $SetScript
-                    TestScript = $TestScript
-                    Result = ('True' -in (Test-Path $using:proGetWebConfig))
-                }
+                return @{ 'Result' = $true }
             }
             SetScript = {
                 $cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=CH3J50AN-0HN8-P34RU4-J9V4EF-83JU9CVR /ConnectionString='Data Source=sqlserver01; Initial Catalog=proget; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='devops\proget' /Password='P@`$`$word12345' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
                 Invoke-Expression $cmd | Write-Verbose
             }
             TestScript = {
-                $Status = ('True' -in (Test-Path $using:proGetWebConfig))
-                $Status -eq $True
+                Test-Path $using:proGetWebConfig
             }
+            PsDscRunAsCredential = $domainCredential
             DependsOn = "[Script]DownloadProGet"
         }
     }
