@@ -20,60 +20,60 @@ configuration TfsConfig
 
         Computer JoinDomain
         {
-            Name       = $Node.NodeName
+            Name = $Node.NodeName
             DomainName = $Node.DomainName
             Credential = $domainCredential
         }
 
         WindowsFeature IIS {
             Ensure = "Present"
-            Name   = "Web-Server"
+            Name = "Web-Server"
         }
 
         xWebsite StopDefaultSite
         {
-            Ensure          = 'Present'
-            Name            = 'Default Web Site'
-            State           = 'Stopped'
-            PhysicalPath    = 'C:\inetpub\wwwroot'
-            DependsOn       = '[WindowsFeature]IIS'
+            Ensure = 'Present'
+            Name = 'Default Web Site'
+            State = 'Stopped'
+            PhysicalPath = 'C:\inetpub\wwwroot'
+            DependsOn = '[WindowsFeature]IIS'
         }
 
         File InstallsDirectory {
-            Ensure          = "Present"
-            Type            = "Directory"
+            Ensure = "Present"
+            Type = "Directory"
             DestinationPath = $installsDirectory
         }
 
         Script DownloadTFS {
-            GetScript  = {
+            GetScript = {
                 @{
-                    GetScript  = $GetScript
-                    SetScript  = $SetScript
+                    GetScript = $GetScript
+                    SetScript = $SetScript
                     TestScript = $TestScript
-                    Result     = ('True' -in (Test-Path $using:tfsInstallFile))
+                    Result = ('True' -in (Test-Path $using:tfsInstallFile))
                 }
             }
-            SetScript  = {
+            SetScript = {
                 Invoke-WebRequest -Uri $using:tfsDownload -OutFile $using:tfsInstallFile
             }
             TestScript = {
                 $Status = ('True' -in (Test-Path $using:tfsInstallFile))
                 $Status -eq $True
             }
-            DependsOn  = "[File]InstallsDirectory"
+            DependsOn = "[File]InstallsDirectory"
         }
 
         Script InstallTFS {
-            GetScript  = { 
+            GetScript = { 
                 @{
-                    GetScript  = $GetScript
-                    SetScript  = $SetScript
+                    GetScript = $GetScript
+                    SetScript = $SetScript
                     TestScript = $TestScript
-                    Result     = ('True' -in (Test-Path $using:tfsConfigExe))
+                    Result = ('True' -in (Test-Path $using:tfsConfigExe))
                 }
             }
-            SetScript  = {
+            SetScript = {
                 $cmd = $using:tfsInstallFile + " /full /quiet /Log $using:tfsInstallLog"
                 Invoke-Expression $cmd | Write-Verbose
                 Start-Sleep -s 10
@@ -82,7 +82,7 @@ configuration TfsConfig
             TestScript = {
                 Test-Path $using:tfsConfigExe
             }
-            DependsOn  = "[Script]DownloadTFS"
+            DependsOn = "[Script]DownloadTFS"
         }
 
         xPendingReboot PostInstallReboot {
@@ -94,16 +94,15 @@ configuration TfsConfig
         {
             GetScript = {
                 @{
-                    GetScript  = $GetScript
-                    SetScript  = $SetScript
+                    GetScript = $GetScript
+                    SetScript = $SetScript
                     TestScript = $TestScript
-                    Result     = ('True' -in (Test-Path $using:tfsConfigExe))
+                    Result = ('True' -in (Test-Path $using:tfsConfigExe))
                 }                
             }
             SetScript = {
                 $sqlServerInstance = "sqlserver01.devops.local"
-                $siteBindings = "https:*:443:tfs01.devops.local:My:generate,http:*:80:"
-                $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced /inputs:SqlInstance=$sqlServerInstance;SiteBindings='$siteBindings'"
+                $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced /inputs:SqlInstance=$sqlServerInstance"
                 Invoke-Expression $cmd | Write-Verbose
             }
             TestScript = {

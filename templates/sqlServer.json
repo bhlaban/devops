@@ -160,7 +160,7 @@
           }
         },
         "protectedSettings": {
-          "SQLAuthUpdateUserName": "jama",
+          "SQLAuthUpdateUserName": "superuser",
           "SQLAuthUpdatePassword": "[parameters('adminPassword')]"
         }
       }

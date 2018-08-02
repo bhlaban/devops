@@ -9,7 +9,7 @@ configuration SonarQubeConfig
     {
         Computer JoinDomain
         {
-            Name       = $Node.NodeName
+            Name = $Node.NodeName
             DomainName = $Node.DomainName
             Credential = $domainCredential
         }

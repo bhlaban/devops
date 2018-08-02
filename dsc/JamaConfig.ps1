@@ -8,9 +8,9 @@ configuration JamaConfig
         nxFile ExampleFile
         {
             DestinationPath = "/tmp/example"
-            Contents        = "hello world"
-            Ensure          = "Present"
-            Type            = "File"
+            Contents = "hello world"
+            Ensure = "Present"
+            Type = "File"
         }
     }
 }
