@@ -85,8 +85,10 @@ configuration TfsConfig
                 return @{ 'Result' = $true }               
             }
             SetScript = {
+                $siteBindings = "https:*:443:tfs01.devops.local:My:generate"
+                $siteBindings += ",http:*:80:"
                 $sqlServerInstance = "sqlserver01.devops.local"
-                $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced /inputs:SqlInstance=$sqlServerInstance"
+                $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced /inputs:SqlInstance=$sqlServerInstance';'SiteBindings='$siteBindings'"
                 Invoke-Expression $cmd | Write-Verbose
             }
             TestScript = {

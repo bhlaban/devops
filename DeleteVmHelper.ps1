@@ -19,7 +19,7 @@ function Delete-VM {
     $dscNode = Get-AzureRmAutomationDscNode -ResourceGroupName $resourceGroupName -AutomationAccountName $automationAccountName -Name $vmName -ErrorAction Ignore
     If($dscNode -ne $null) {
         Write-Host "Deleting $vmName DSC node."
-        Unregister-AzureRmAutomationDscNode -ResourceGroupName $resourceGroupName -AutomationAccountName $automationAccountName -Id $dscNode.Id
+        Unregister-AzureRmAutomationDscNode -ResourceGroupName $resourceGroupName -AutomationAccountName $automationAccountName -Id $dscNode.Id -Force
         Write-Host "$vmName DSC node deleted."
     }
     else {
