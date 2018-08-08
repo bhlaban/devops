@@ -79,24 +79,24 @@ configuration TfsConfig
             DependsOn = "[Script]InstallTFS"
         }
 
-        Script ConfigureTFS
-        {
-            GetScript = {
-                return @{ 'Result' = $true }               
-            }
-            SetScript = {
-                $siteBindings = "https:*:443:tfs01.devops.local:My:generate"
-                $siteBindings += ",http:*:80:"
-                $sqlServerInstance = "sqlserver01.devops.local"
-                $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced /inputs:SqlInstance=$sqlServerInstance';'SiteBindings='$siteBindings'"
-                Invoke-Expression $cmd | Write-Verbose
-            }
-            TestScript = {
-                $sites = Get-WebBinding | Where-Object {$_.bindingInformation -like "*tfs*" }
-                -not [String]::IsNullOrEmpty($sites)
-            }
-            PsDscRunAsCredential = $domainCredential
-            DependsOn = "[xPendingReboot]PostInstallReboot","[xWebsite]StopDefaultSite"
-        }
+        # Script ConfigureTFS
+        # {
+        #     GetScript = {
+        #         return @{ 'Result' = $true }               
+        #     }
+        #     SetScript = {
+        #         $siteBindings = "https:*:443:tfs01.devops.local:My:generate"
+        #         $siteBindings += ",http:*:80:"
+        #         $sqlServerInstance = "sqlserver01.devops.local"
+        #         $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced /inputs:SqlInstance=$sqlServerInstance';'SiteBindings='$siteBindings'"
+        #         Invoke-Expression $cmd | Write-Verbose
+        #     }
+        #     TestScript = {
+        #         $sites = Get-WebBinding | Where-Object {$_.bindingInformation -like "*tfs*" }
+        #         -not [String]::IsNullOrEmpty($sites)
+        #     }
+        #     PsDscRunAsCredential = $domainCredential
+        #     DependsOn = "[xPendingReboot]PostInstallReboot","[xWebsite]StopDefaultSite"
+        # }
     }
 }
