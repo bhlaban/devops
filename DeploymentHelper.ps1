@@ -3,7 +3,7 @@
 $location = 'usgovvirginia'
 $resourceGroupName = 'devops-rg'
 $deploymentName = 'DevOps'
-$domainName = 'devops.local'
+$domainName = 'seicdevops.com'
 $adminUsername = 'superuser'
 $adminPassword = ConvertTo-SecureString 'P@$$word12345' -AsPlainText -Force
 $compileDateTime = Get-Date -Format g

@@ -1,6 +1,6 @@
 ﻿#Login-AzureRmAccount -Environment AzureUSGovernment
 
-$servicesToDelete = @("Tfs", "TfsAgent")
+$servicesToDelete = @("DC", "JumpBox", "SqlServer", "Jama", "ProGet", "SonarQube", "Tfs", "TfsAgent")
 
 function Delete-VM {
     
@@ -14,7 +14,15 @@ function Delete-VM {
     )
 
     $vmName = $serviceName + '01'
-    $configurationName = $serviceName + 'Config'
+
+    $configurationName = ''
+
+    If($serviceName -eq 'DC') {
+        $configurationName = 'DomainControllerConfig'
+    }
+    else {
+        $configurationName = $serviceName + 'Config'
+    }
 
     $dscNode = Get-AzureRmAutomationDscNode -ResourceGroupName $resourceGroupName -AutomationAccountName $automationAccountName -Name $vmName -ErrorAction Ignore
     If($dscNode -ne $null) {
@@ -54,6 +62,16 @@ function Delete-VM {
     }
 
     $diskName = $vmName + '-disk-os'
+    If(Get-AzureRmDisk -ResourceGroupName $resourceGroupName -Name $diskName -ErrorAction Ignore) {
+        Write-Host "Deleting $diskName."
+        Remove-AzureRmDisk -ResourceGroupName $resourceGroupName -DiskName $diskName -Force
+        Write-Host "$diskName deleted."
+    }
+    else {
+        Write-Host "$diskName does not exist."
+    }
+
+    $diskName = $vmName + '-disk-data'
     If(Get-AzureRmDisk -ResourceGroupName $resourceGroupName -Name $diskName -ErrorAction Ignore) {
         Write-Host "Deleting $diskName."
         Remove-AzureRmDisk -ResourceGroupName $resourceGroupName -DiskName $diskName -Force
