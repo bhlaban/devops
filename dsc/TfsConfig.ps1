@@ -18,10 +18,6 @@ configuration TfsConfig
 
     Node localhost
     {
-        LocalConfigurationManager{
-            RebootNodeIfNeeded = $True
-        }
-
         Computer JoinDomain
         {
             Name = $Node.NodeName
@@ -69,7 +65,7 @@ configuration TfsConfig
             SetScript = {
                 $cmd = $using:tfsInstallFile + " /full /quiet /Log $using:tfsInstallLog"
                 Invoke-Expression $cmd | Write-Verbose
-                Start-Sleep -s 10
+                Start-Sleep -s 15
                 Wait-Process -Name "tfs_installer"
             }
             TestScript = {
