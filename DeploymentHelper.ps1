@@ -1,8 +1,8 @@
 ﻿#Login-AzureRmAccount -Environment AzureUSGovernment
 
 $location = 'usgovvirginia'
-$resourceGroupName = 'devops-rg'
-$deploymentName = 'DevOps'
+$resourceGroupName = 'seicdevops-rg'
+$deploymentName = 'SEIC-DevOps'
 $domainName = 'seicdevops.com'
 $adminUsername = 'superuser'
 $adminPassword = ConvertTo-SecureString 'P@$$word12345' -AsPlainText -Force
