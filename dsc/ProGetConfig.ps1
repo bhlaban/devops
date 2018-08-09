@@ -80,7 +80,7 @@ configuration ProGetConfig
                 return @{ 'Result' = $true }
             }
             SetScript = {
-                a$cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=$using:LicenseKey /ConnectionString='Data Source=$using:SqlServerInstance; Initial Catalog=proget; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='seicdevops\proget' /Password='P@`$`$word12345' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
+                $cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=$using:LicenseKey /ConnectionString='Data Source=$using:SqlServerInstance; Initial Catalog=proget; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='seicdevops\proget' /Password='P@`$`$word12345' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
                 Invoke-Expression $cmd | Write-Verbose
             }
             TestScript = {
