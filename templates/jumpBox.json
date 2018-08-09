@@ -39,10 +39,10 @@
         "description": "The name of the subnet to connect to"
       }
     },
-    "existingPublicIpName": {
+    "existingPublicIpId": {
       "type": "string",
       "metadata": {
-        "description": "The name of the public IP to use"
+        "description": "The ID of the public IP to use"
       }
     },
     "automationAccountName": {
@@ -86,7 +86,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "publicIpAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('existingPublicIpName'))]"
+                "id": "[parameters('existingPublicIpId')]"
               },
               "subnet": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"

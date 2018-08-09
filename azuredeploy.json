@@ -40,7 +40,7 @@
     "jumpBoxVmSize": "Standard_D4_v3",
     "jumpBoxConfigName": "JumpBoxConfig",
     "jumpBoxNodeConfigName": "[concat(variables('jumpBoxConfigName'), '.localhost')]",
-    "jumpBoxPublicIpName": "jumpbox-ip",
+    "jumpBoxPublicIpId": "[resourceId('core-rg', 'Microsoft.Network/publicIpAddresses', 'jumpbox-ip')]",
     "dcIpAddress": "10.0.1.10",
     "dcVmName": "dc01",
     "dcVmSize": "Standard_D4_v3",
@@ -56,25 +56,25 @@
     "jamaVmSize": "Standard_D4_v3",
     "jamaConfigName": "JamaConfig",
     "jamaNodeConfigName": "[concat(variables('jamaConfigName'), '.localhost')]",
-    "jamaPublicIpName": "jama-ip",
+    "jamaPublicIpId": "[resourceId('core-rg', 'Microsoft.Network/publicIpAddresses', 'jama-ip')]",
     "proGetIpAddress": "10.0.2.30",
     "proGetVmName": "proget01",
     "proGetVmSize": "Standard_D4_v3",
     "proGetConfigName": "ProGetConfig",
     "proGetNodeConfigName": "[concat(variables('proGetConfigName'), '.localhost')]",
-    "proGetPublicIpName": "proget-ip",
+    "proGetPublicIpId": "[resourceId('core-rg', 'Microsoft.Network/publicIpAddresses', 'proget-ip')]",
     "sonarQubeIpAddress": "10.0.2.40",
     "sonarQubeVmName": "sonarqube01",
     "sonarQubeVmSize": "Standard_D4_v3",
     "sonarQubeConfigName": "SonarQubeConfig",
     "sonarQubeNodeConfigName": "[concat(variables('sonarQubeConfigName'), '.localhost')]",
-    "sonarQubePublicIpName": "sonarqube-ip",
+    "sonarQubePublicIpId": "[resourceId('core-rg', 'Microsoft.Network/publicIpAddresses', 'sonarqube-ip')]",
     "tfsIpAddress": "10.0.2.20",
     "tfsVmName": "tfs01",
     "tfsVmSize": "Standard_D4_v3",
     "tfsConfigName": "TfsConfig",
     "tfsNodeConfigName": "[concat(variables('tfsConfigName'), '.localhost')]",
-    "tfsPublicIpName": "tfs-ip",
+    "tfsPublicIpId": "[resourceId('core-rg', 'Microsoft.Network/publicIpAddresses', 'tfs-ip')]",
     "tfsAgentIpAddress": "10.0.2.50",
     "tfsAgentVmName": "tfsagent01",
     "tfsAgentVmSize": "Standard_D4_v3",
@@ -183,21 +183,6 @@
               "[variables('dcIpAddress')]",
               "8.8.8.8"
             ]
-          },
-          "jumpBoxPublicIpName": {
-            "value": "[variables('jumpBoxPublicIpName')]"
-          },
-          "jamaPublicIpName": {
-            "value": "[variables('jamaPublicIpName')]"
-          },
-          "proGetPublicIpName": {
-            "value": "[variables('proGetPublicIpName')]"
-          },
-          "sonarQubePublicIpName": {
-            "value": "[variables('sonarQubePublicIpName')]"
-          },
-          "tfsPublicIpName": {
-            "value": "[variables('tfsPublicIpName')]"
           }
         }
       }
@@ -236,8 +221,8 @@
           "existingSubnetName": {
             "value": "[variables('managementSubnetName')]"
           },
-          "existingPublicIpName": {
-            "value": "[variables('jumpBoxPublicIpName')]"
+          "existingPublicIpId": {
+            "value": "[variables('jumpBoxPublicIpId')]"
           },
           "automationAccountName": {
             "value": "[variables('automationAccountName')]"
@@ -375,8 +360,8 @@
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
           },
-          "existingPublicIpName": {
-            "value": "[variables('jamaPublicIpName')]"
+          "existingPublicIpId": {
+            "value": "[variables('jamaPublicIpId')]"
           },
           "automationAccountName": {
             "value": "[variables('automationAccountName')]"
@@ -423,8 +408,8 @@
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
           },
-          "existingPublicIpName": {
-            "value": "[variables('proGetPublicIpName')]"
+          "existingPublicIpId": {
+            "value": "[variables('proGetPublicIpId')]"
           },
           "automationAccountName": {
             "value": "[variables('automationAccountName')]"
@@ -471,8 +456,8 @@
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
           },
-          "existingPublicIpName": {
-            "value": "[variables('sonarQubePublicIpName')]"
+          "existingPublicIpId": {
+            "value": "[variables('sonarQubePublicIpId')]"
           },
           "automationAccountName": {
             "value": "[variables('automationAccountName')]"
@@ -519,8 +504,8 @@
           "existingSubnetName": {
             "value": "[variables('applicationSubnetName')]"
           },
-          "existingPublicIpName": {
-            "value": "[variables('tfsPublicIpName')]"
+          "existingPublicIpId": {
+            "value": "[variables('tfsPublicIpId')]"
           },
           "automationAccountName": {
             "value": "[variables('automationAccountName')]"
