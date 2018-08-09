@@ -1,13 +1,24 @@
 configuration ProGetConfig
 {
+    param
+    (
+        [Parameter(Mandatory)]
+        [string]$DownloadUrl,
+
+        [Parameter(Mandatory)]
+        [string]$LicenseKey,
+
+        [Parameter(Mandatory)]
+        [string]$SqlServerInstance
+    )
+
     Import-DscResource -ModuleName 'ComputerManagementDsc'
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
     Import-DscResource -ModuleName 'xWebAdministration'
 
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
     $installsDirectory = "C:\Installs"
-    $proGetDownload = "https://inedo.com/proget/download/sql/5.1.6"
-    $proGetInstaller = Join-Path $installsDirectory "ProGetSetup5.1.6.exe"
+    $proGetInstaller = Join-Path $installsDirectory "ProGetSetup.exe"
     $proGetWebConfig = "C:\Program Files\ProGet\WebApp\web.config"
 
     Node $AllNodes.NodeName
@@ -56,7 +67,7 @@ configuration ProGetConfig
                 return @{ 'Result' = $true }
             }
             SetScript = {
-                Invoke-WebRequest -Uri $using:proGetDownload -OutFile $using:proGetInstaller
+                Invoke-WebRequest -Uri $using:DownloadUrl -OutFile $using:proGetInstaller
             }
             TestScript = {
                 Test-Path $using:proGetInstaller
@@ -69,7 +80,7 @@ configuration ProGetConfig
                 return @{ 'Result' = $true }
             }
             SetScript = {
-                $cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=CH3J50AN-0HN8-P34RU4-J9V4EF-83JU9CVR /ConnectionString='Data Source=sqlserver01; Initial Catalog=proget; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='devops\proget' /Password='P@`$`$word12345' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
+                a$cmd = "& '$using:proGetInstaller' /S /Edition=LicenseKey /LicenseKey=$using:LicenseKey /ConnectionString='Data Source=$using:SqlServerInstance; Initial Catalog=proget; Integrated Security=True;' /Port=80 /UseIntegratedWebServer=false /UserAccount='seicdevops\proget' /Password='P@`$`$word12345' /ConfigureIIS /LogFile='C:\Installs\proget-install-log.txt'"
                 Invoke-Expression $cmd | Write-Verbose
             }
             TestScript = {

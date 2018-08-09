@@ -571,7 +571,10 @@
                             "name": "[variables('dscConfigurations').ProGetConfig.name]"
                         },
                         "parameters": {
-                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]",
+                            "DownloadUrl": "https://inedo.com/proget/download/sql/5.1.6",
+                            "LicenseKey": "CH3J50AN-0HN8-P34RU4-J9V4EF-83JU9CVR",
+                            "SqlServerInstance": "sqlserver01"
                         }
                     }
                 },
