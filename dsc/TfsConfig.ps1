@@ -6,8 +6,12 @@ configuration TfsConfig
     Import-DscResource -ModuleName 'xWebAdministration'
 
     $domainCredential = Get-AutomationPSCredential -Name "DomainCredential"
-    $tfsDownload = "https://go.microsoft.com/fwlink/?LinkId=856344"
+    $globalSiteName = "tfs"
     $installsDirectory = "C:\Installs"
+    $isPrimaryInstance = $true
+    $sslThumbprint = "generate"
+    $sqlServerInstance = "sqlserver01"
+    $tfsDownload = "https://go.microsoft.com/fwlink/?LinkId=856344"
     $tfsInstallFile = Join-Path $installsDirectory "tfs-install.exe"
     $tfsInstallLog = Join-Path $installsDirectory "tfs-install-log.txt"
     $tfsConfigExe = "C:\Program Files\Microsoft Team Foundation Server 2018\Tools\TfsConfig.exe"
@@ -79,24 +83,44 @@ configuration TfsConfig
             DependsOn = "[Script]InstallTFS"
         }
 
-        # Script ConfigureTFS
-        # {
-        #     GetScript = {
-        #         return @{ 'Result' = $true }               
-        #     }
-        #     SetScript = {
-        #         $siteBindings = "https:*:443:tfs01.devops.local:My:generate"
-        #         $siteBindings += ",http:*:80:"
-        #         $sqlServerInstance = "sqlserver01.devops.local"
-        #         $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced /inputs:SqlInstance=$sqlServerInstance';'SiteBindings='$siteBindings'"
-        #         Invoke-Expression $cmd | Write-Verbose
-        #     }
-        #     TestScript = {
-        #         $sites = Get-WebBinding | Where-Object {$_.bindingInformation -like "*tfs*" }
-        #         -not [String]::IsNullOrEmpty($sites)
-        #     }
-        #     PsDscRunAsCredential = $domainCredential
-        #     DependsOn = "[xPendingReboot]PostInstallReboot","[xWebsite]StopDefaultSite"
-        # }
+        Script ConfigureTFS
+        {
+            GetScript = {
+                return @{ 'Result' = $true }               
+            }
+            SetScript = {
+
+                $siteBindings = "https:*:443:" + $using:hostName + "." + $using:Node.DomainName + ":My:" + $using:sslThumbprint
+
+                if ($using:hostName -ne $using:globalSiteName) {
+                    $siteBindings += ",https:*:443:" + $using:globalSiteName + "." + $using:Node.DomainName + ":My:" + $using:sslThumbprint
+                }
+
+                $siteBindings += ",http:*:80:"
+
+                $publicUrl = "http://$using:hostName"
+
+                $cmd = ""
+                if ($using:isPrimaryInstance) {                
+                    $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:NewServerAdvanced  /inputs:WebSiteVDirName=';'PublicUrl=$publicUrl';'SqlInstance=$using:SqlServerInstance';'SiteBindings='$siteBindings'"
+                } else {
+                    $cmd = "& '$using:tfsConfigExe' unattend /configure /continue /type:ApplicationTierOnlyAdvanced  /inputs:WebSiteVDirName=';'PublicUrl=$publicUrl';'SqlInstance=$using:SqlServerInstance';'SiteBindings='$siteBindings'"
+                }
+
+                Write-Verbose "$cmd"
+                Invoke-Expression $cmd | Write-Verbose
+
+                $publicUrl = "https://$using:globalSiteName" + "." + $using:Node.DomainName
+                $cmd = "& '$using:tfsConfigExe' settings /publicUrl:$publicUrl"
+                Write-Verbose "$cmd"
+                Invoke-Expression $cmd | Write-Verbose
+            }
+            TestScript = {
+                $sites = Get-WebBinding | Where-Object {$_.bindingInformation -like "*tfs*" }
+                -not [String]::IsNullOrEmpty($sites)
+            }
+            PsDscRunAsCredential = $domainCredential
+            DependsOn = "[xPendingReboot]PostInstallReboot","[xWebsite]StopDefaultSite"
+        }
     }
 }
