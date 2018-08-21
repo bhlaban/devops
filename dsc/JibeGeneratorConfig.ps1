@@ -1,4 +1,4 @@
-configuration JibeGeneratoreConfig
+configuration JibeGeneratorConfig
 {
     Import-DscResource -ModuleName 'ComputerManagementDsc'
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
