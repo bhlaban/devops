@@ -26,6 +26,9 @@
         "jamaConfigName": {
             "type": "string"
         },
+        "jibeGeneratorConfigName": {
+            "type": "string"
+        },
         "proGetConfigName": {
             "type": "string"
         },
@@ -70,6 +73,12 @@
                 "description": "Minimum viable configuration for a jama role",
                 "script": "[concat('dsc/', parameters('jamaConfigName'), '.ps1')]",
                 "compileName": "[guid(parameters('automationAccountName'), parameters('jamaConfigName'), parameters('compileDateTime'))]"
+            },
+            "JibeGeneratorConfig": {
+                "name": "[parameters('jibeGeneratorConfigName')]",
+                "description": "Minimum viable configuration for a JIBE Generator server role",
+                "script": "[concat('dsc/', parameters('jibeGeneratorConfigName'), '.ps1')]",
+                "compileName": "[guid(parameters('automationAccountName'), parameters('jibeGeneratorConfigName'), parameters('compileDateTime'))]"
             },
             "ProGetConfig": {
                 "name": "[parameters('proGetConfigName')]",
@@ -403,6 +412,26 @@
                     }
                 },
                 {
+                    "name": "[variables('dscConfigurations').JibeGeneratorConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').ComputerManagementDsc.name]",
+                        "[variables('dscResources').xWebAdministration.name]",
+                        "DomainCredential"
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[uri(parameters('artifactsUri'), variables('dscConfigurations').JibeGeneratorConfig.script)]"
+                        }
+                    }
+                },
+                {
                     "name": "[variables('dscConfigurations').ProGetConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
@@ -557,6 +586,25 @@
                     }
                 },
                 {
+                    "name": "[variables('dscConfigurations').JibeGeneratorConfig.compileName]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').JibeGeneratorConfig.name]",
+                        "[variables('dscConfigurations').JamaConfig.compileName]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').JibeGeneratorConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":[{\"NodeName\":\"localhost\",\"DomainName\":\"', parameters('domainName'), '\"}]}')]"
+                        }
+                    }
+                },
+                {
                     "name": "[variables('dscConfigurations').ProGetConfig.compileName]",
                     "type": "compilationjobs",
                     "apiVersion": "2015-10-31",
@@ -564,7 +612,7 @@
                     "dependsOn": [
                         "[parameters('AutomationAccountName')]",
                         "[variables('dscConfigurations').ProGetConfig.name]",
-                        "[variables('dscConfigurations').JamaConfig.compileName]"
+                        "[variables('dscConfigurations').JibeGeneratorConfig.compileName]"
                     ],
                     "properties": {
                         "configuration": {

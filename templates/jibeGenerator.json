@@ -1,0 +1,203 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the VM to create"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The size of the VM to create"
+      },
+      "defaultValue": "Standard_D4_v3"
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the administrator account to create"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password for the Administrator account"
+      }
+    },
+    "ipAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address to give the VM"
+      }
+    },
+    "existingVnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Virtual Network to connect to"
+      }
+    },
+    "existingSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the subnet to connect to"
+      }
+    },
+    "existingPublicIpId": {
+      "type": "string",
+      "metadata": {
+        "description": "The ID of the public IP to use"
+      }
+    },
+    "automationAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the automation account"
+      }
+    },
+    "nodeConfigName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the DSC Node Configuration in Azure Automation DSC to apply"
+      }
+    }
+  },
+  "variables": {
+    "networkInterfaceName": "[concat(parameters('vmName'), '-nic')]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('automationAccountName')]",
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiversion": "2015-10-31",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "name": "OMS"
+        }
+      }
+    },
+    {
+      "name": "[variables('networkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2017-09-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('ipAddress')]",
+              "publicIpAddress": {
+                "id": "[parameters('existingPublicIpId')]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVnetName'), parameters('existingSubnetName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('vmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2017-03-30",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2016-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('vmName'), '-disk-os')]",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('networkInterfaceName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('vmName'), '/onboard-dsc')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2017-12-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.75",
+        "autoUpgradeMinorVersion": true,
+        "protectedSettings": {
+          "Items": {
+            "registrationKeyPrivate": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2015-10-31').Keys[0].value]"
+          }
+        },
+        "settings": {
+          "Properties": [
+            {
+              "Name": "RegistrationKey",
+              "Value": {
+                "UserName": "PLACEHOLDER_DONOTUSE",
+                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+              },
+              "TypeName": "System.Management.Automation.PSCredential"
+            },
+            {
+              "Name": "RegistrationUrl",
+              "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))).registrationUrl]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "NodeConfigurationName",
+              "Value": "[parameters('nodeConfigName')]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "ConfigurationMode",
+              "Value": "ApplyandAutoCorrect",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "RebootNodeIfNeeded",
+              "Value": true,
+              "TypeName": "System.Boolean"
+            },
+            {
+              "Name": "ActionAfterReboot",
+              "Value": "ContinueConfiguration",
+              "TypeName": "System.String"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

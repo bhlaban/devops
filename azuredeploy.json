@@ -57,6 +57,12 @@
     "jamaConfigName": "JamaConfig",
     "jamaNodeConfigName": "[concat(variables('jamaConfigName'), '.localhost')]",
     "jamaPublicIpId": "[resourceId('core-rg', 'Microsoft.Network/publicIpAddresses', 'jama-ip')]",
+    "jibeGeneratorIpAddress": "10.0.2.60",
+    "jibeGeneratorVmName": "jibeGenerator01",
+    "jibeGeneratorVmSize": "Standard_D4_v3",
+    "jibeGeneratorConfigName": "JibeGeneratorConfig",
+    "jibeGeneratorNodeConfigName": "[concat(variables('jibeGeneratorConfigName'), '.localhost')]",
+    "jibeGeneratorPublicIpId": "[resourceId('core-rg', 'Microsoft.Network/publicIpAddresses', 'jibegenerator-ip')]",
     "proGetIpAddress": "10.0.2.30",
     "proGetVmName": "proget01",
     "proGetVmSize": "Standard_D4_v3",
@@ -88,6 +94,7 @@
       "domainControllerTemplate": "[uri(variables('artifactsUri'), 'templates/domainController.json')]",
       "sqlServerTemplate": "[uri(variables('artifactsUri'), 'templates/sqlServer.json')]",
       "jamaTemplate": "[uri(variables('artifactsUri'), 'templates/jama.json')]",
+      "jibeGeneratorTemplate": "[uri(variables('artifactsUri'), 'templates/jibeGenerator.json')]",
       "proGetTemplate": "[uri(variables('artifactsUri'), 'templates/proGet.json')]",
       "sonarQubeTemplate": "[uri(variables('artifactsUri'), 'templates/sonarQube.json')]",
       "tfsTemplate": "[uri(variables('artifactsUri'), 'templates/tfs.json')]",
@@ -129,6 +136,9 @@
           },
           "jamaConfigName": {
             "value": "[variables('jamaConfigName')]"
+          },
+          "jibeGeneratorConfigName": {
+            "value": "[variables('jibeGeneratorConfigName')]"
           },
           "proGetConfigName": {
             "value": "[variables('proGetConfigName')]"
@@ -368,6 +378,54 @@
           },
           "nodeConfigName": {
             "value": "[variables('jamaNodeConfigName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "JibeGenerator",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This creates the JIBE Generator VM",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SQLServer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('templates').jibeGeneratorTemplate]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('jibeGeneratorVmName')]"
+          },
+          "vmSize": {
+            "value": "[variables('jibeGeneratorVmSize')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "ipAddress": {
+            "value": "[variables('jibeGeneratorIpAddress')]"
+          },
+          "existingVnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "existingSubnetName": {
+            "value": "[variables('applicationSubnetName')]"
+          },
+          "existingPublicIpId": {
+            "value": "[variables('jibeGeneratorPublicIpId')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountName')]"
+          },
+          "nodeConfigName": {
+            "value": "[variables('jibeGeneratorNodeConfigName')]"
           }
         }
       }
